@@ -17,9 +17,11 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -63,5 +65,11 @@ public class Member extends BaseEntity {
 
     public String getRoleKey() {
         return this.role.getKey();
+    }
+
+    public Member update(String name) {
+        this.name = name;
+
+        return this;
     }
 }
