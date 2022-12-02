@@ -1,8 +1,8 @@
 package com.example.diary.domain.member.entity;
 
 import com.example.diary.domain.diary.entity.Diary;
-import com.example.diary.domain.group.entity.Group;
 import com.example.diary.domain.relation.entity.Relation;
+import com.example.diary.domain.team.entity.Team;
 import com.example.diary.global.common.BaseEntity;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -41,5 +41,5 @@ public class Member extends BaseEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "member")
-    private List<Group> groups = new ArrayList<>();
+    private List<Team> teams = new ArrayList<>();
 }

@@ -1,4 +1,4 @@
-package com.example.diary.domain.group.entity;
+package com.example.diary.domain.team.entity;
 
 import com.example.diary.domain.member.entity.Member;
 import com.example.diary.global.common.BaseEntity;
@@ -11,11 +11,11 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Group extends BaseEntity {
+public class Team extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "group_id")
+    @Column(name = "team_id")
     private Long id;
 
     private String code;
