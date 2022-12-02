@@ -1,7 +1,6 @@
 package com.example.diary.domain.member.entity;
 
 public enum Role {
-    GUEST("ROLE_GUEST"),
     MEMBER("ROLE_MEMBER"),
     ADMIN("ROLE_ADMIN");
 
