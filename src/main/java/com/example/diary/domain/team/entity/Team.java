@@ -1,14 +1,17 @@
 package com.example.diary.domain.team.entity;
 
-import com.example.diary.domain.member.entity.Member;
+import com.example.diary.domain.team_member.entity.TeamMember;
 import com.example.diary.global.common.BaseEntity;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import lombok.Builder;
 
 @Entity
 public class Team extends BaseEntity {
@@ -20,6 +23,11 @@ public class Team extends BaseEntity {
 
     private String code;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Member member;
+    @Builder.Default
+    @OneToMany(mappedBy = "team")
+    private List<TeamMember> teamMembers = new ArrayList<>();
+
+    private LocalDate startDate;
+
+    private LocalDate endDate;
 }
