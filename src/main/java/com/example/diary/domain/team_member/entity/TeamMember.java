@@ -12,7 +12,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import lombok.Getter;
 
+@Getter
 @Entity
 public class TeamMember extends BaseEntity {
 

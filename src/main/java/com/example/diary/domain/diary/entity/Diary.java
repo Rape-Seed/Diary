@@ -13,7 +13,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 @Entity
 public class Diary extends BaseEntity {
 
