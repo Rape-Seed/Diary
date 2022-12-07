@@ -1,13 +1,22 @@
 package com.example.diary.global.config;
 
 import com.example.diary.domain.member.entity.Role;
+import com.example.diary.domain.member.repository.MemberRepository;
+import com.example.diary.global.auth.exception.CustomAuthenticationEntryPoint;
+import com.example.diary.global.auth.filter.JwtAuthenticationFilter;
+import com.example.diary.global.auth.handler.CustomAccessDeniedHandler;
+import com.example.diary.global.auth.handler.OAuth2AuthenticationFailureHandler;
+import com.example.diary.global.auth.handler.OAuth2AuthenticationSuccessHandler;
+import com.example.diary.global.auth.repository.OAuth2AuthorizationRequestCookieRepository;
+import com.example.diary.global.auth.service.CustomOAuth2UserService;
+import com.example.diary.global.auth.service.CustomUserDetailsService;
 import com.example.diary.global.auth.token.AuthTokenProvider;
 import com.example.diary.global.properties.AppProperties;
 import com.example.diary.global.properties.CorsProperties;
+import com.example.diary.global.redis.RedisService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -16,11 +25,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@Configuration
+@Component
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -28,9 +39,10 @@ public class SecurityConfig {
     private final CorsProperties corsProperties;
     private final AppProperties appProperties;
     private final AuthTokenProvider tokenProvider;
-    private final CustomUserDetailsService userDetailsService;
+    private final MemberRepository memberRepository;
+
+    private final RedisService redisService;
     private final CustomOAuth2UserService oAuth2UserService;
-    private final UserRefreshTokenRepository userRefreshTokenRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -44,7 +56,7 @@ public class SecurityConfig {
                 .httpBasic().disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-                .accessDeniedHandler(new TokenAccessDeniedHandler())
+                .accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()
                 .authorizeRequests(auth -> auth
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
@@ -64,7 +76,10 @@ public class SecurityConfig {
                 .userService(oAuth2UserService)
                 .and()
                 .successHandler(oAuth2AuthenticationSuccessHandler())
-                .failureHandler(oAuth2AuthenticationFailureHandler());
+                .failureHandler(oAuth2AuthenticationFailureHandler())
+                .and()
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
@@ -81,8 +96,9 @@ public class SecurityConfig {
      * UserDetailService설정
      */
     @Bean
-    public void userDetailsService(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    public CustomUserDetailsService userDetailsService(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        return new CustomUserDetailsService(memberRepository);
     }
 
     @Bean
@@ -94,16 +110,16 @@ public class SecurityConfig {
      * 토큰 필터 설정
      */
     @Bean
-    public TokenAuthenticationFilter tokenAuthenticationFilter() {
-        return new TokenAuthenticationFilter(tokenProvider);
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(tokenProvider, redisService);
     }
 
     /**
      * 쿠키 기반 인가 Repository / 인가 응답을 연계 하고 검증할 때 사용
      */
     @Bean
-    public OAuth2AuthorizationRequestBasedOnCookieRepository oAuth2AuthorizationRequestBasedOnCookieRepository() {
-        return new OAuth2AuthorizationRequestBasedOnCookieRepository();
+    public OAuth2AuthorizationRequestCookieRepository oAuth2AuthorizationRequestBasedOnCookieRepository() {
+        return new OAuth2AuthorizationRequestCookieRepository();
     }
 
     @Bean
@@ -111,7 +127,7 @@ public class SecurityConfig {
         return new OAuth2AuthenticationSuccessHandler(
                 tokenProvider,
                 appProperties,
-                userRefreshTokenRepository,
+                redisService,
                 oAuth2AuthorizationRequestBasedOnCookieRepository()
         );
     }
@@ -132,7 +148,7 @@ public class SecurityConfig {
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setMaxAge(corsProperties.getMaxAge());
 
-        corsConfiguration.registerCorsConfiguration("/**", corsConfiguration);
+        corsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
         return corsConfigurationSource;
     }
 
