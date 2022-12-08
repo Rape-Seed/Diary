@@ -10,4 +10,6 @@ public interface DiaryService {
     LocalDateTime LongToLocalDateTime(Long time);
 
     DiaryResponse createPersonal(Member member, DiaryRequest diaryRequest);
+
+    DiaryResponse getPersonal(Long diaryId, Member member);
 }

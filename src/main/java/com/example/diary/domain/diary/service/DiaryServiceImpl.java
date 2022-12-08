@@ -5,6 +5,8 @@ import com.example.diary.domain.diary.dto.DiaryResponse;
 import com.example.diary.domain.diary.entity.Diary;
 import com.example.diary.domain.diary.repository.DiaryRepository;
 import com.example.diary.domain.member.entity.Member;
+import com.example.diary.global.advice.exception.DiaryNotAuthorizedException;
+import com.example.diary.global.advice.exception.DiaryNotFoundException;
 import com.example.diary.global.advice.exception.DiaryWrongDateException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -21,11 +23,34 @@ public class DiaryServiceImpl implements DiaryService {
 
     private final DiaryRepository diaryRepository;
 
+    @Override
+    public DiaryResponse getPersonal(Long diaryId, Member member) {
+        Diary diary = findDiaryById(diaryId);
+        checkAuthorization(member, diary);
+        return DiaryResponse.builder()
+                .diaryId(diary.getId())
+                .member(diary.getMember().getName())
+                .content(diary.getContent())
+                .emotion(diary.getEmotion().toString())
+                .build();
+    }
+
+    private Diary findDiaryById(Long diaryId) {
+        return diaryRepository.findById(diaryId).orElseThrow(DiaryNotFoundException::new);
+    }
+
+    private void checkAuthorization(Member member, Diary diary) {
+        if (!member.equals(diary.getMember())) {
+            throw new DiaryNotAuthorizedException();
+        }
+    }
+
     public LocalDateTime LongToLocalDateTime(Long time) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(time), TimeZone.getDefault().toZoneId());
     }
 
     @Transactional
+    @Override
     public DiaryResponse createPersonal(Member member, DiaryRequest diaryRequest) {
 
         checkAvailableDate(diaryRequest.getDate(), diaryRequest.getCurrentTime().toLocalDate());
