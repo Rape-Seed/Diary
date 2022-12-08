@@ -2,6 +2,7 @@ package com.example.diary.domain.diary.service;
 
 import com.example.diary.domain.diary.dto.DiaryRequest;
 import com.example.diary.domain.diary.dto.DiaryResponse;
+import com.example.diary.domain.diary.dto.DiaryUpdateRequest;
 import com.example.diary.domain.diary.entity.Diary;
 import com.example.diary.domain.diary.repository.DiaryRepository;
 import com.example.diary.domain.member.entity.Member;
@@ -77,5 +78,19 @@ public class DiaryServiceImpl implements DiaryService {
         if (date.isBefore(currentDate) || date.plusDays(1).isAfter(currentDate)) {
             throw new DiaryWrongDateException();
         }
+    }
+
+    @Transactional
+    @Override
+    public DiaryResponse updatePersonal(Long diaryId, DiaryUpdateRequest diaryUpdateRequest, Member member) {
+        Diary diary = findDiaryById(diaryId);
+        checkAuthorization(member, diary);
+        diary.updatePersonal(diaryUpdateRequest);
+        return DiaryResponse.builder()
+                .diaryId(diary.getId())
+                .member(member.getName())
+                .content(diary.getContent())
+                .date(diary.getDate())
+                .build();
     }
 }
