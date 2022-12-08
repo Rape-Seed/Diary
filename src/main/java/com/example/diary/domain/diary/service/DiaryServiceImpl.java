@@ -93,4 +93,12 @@ public class DiaryServiceImpl implements DiaryService {
                 .date(diary.getDate())
                 .build();
     }
+
+    @Transactional
+    @Override
+    public void deletePersonal(Long diaryId, Member member) {
+        Diary diary = findDiaryById(diaryId);
+        checkAuthorization(member, diary);
+        diaryRepository.delete(diary);
+    }
 }
