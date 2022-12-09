@@ -20,19 +20,19 @@ public class AuthToken {
     private final String key;
 
     public AuthToken(String token, String key) {
-        this.token = token;
         this.key = key;
+        this.token = token;
     }
 
     public AuthToken(String id, Date expiry, String key) {
-        this.token = createRefreshToken(id, expiry);
         this.key = key;
+        this.token = createRefreshToken(id, expiry);
     }
 
 
     public AuthToken(String id, String role, Date expiry, String key) {
-        this.token = createAccessToken(id, role, expiry);
         this.key = key;
+        this.token = createAccessToken(id, role, expiry);
     }
 
     public String createAccessToken(String id, String role, Date expiry) {
