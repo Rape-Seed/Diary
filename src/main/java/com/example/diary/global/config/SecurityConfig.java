@@ -11,8 +11,9 @@ import com.example.diary.global.auth.repository.OAuth2AuthorizationRequestCookie
 import com.example.diary.global.auth.service.CustomOAuth2UserService;
 import com.example.diary.global.auth.service.CustomUserDetailsService;
 import com.example.diary.global.auth.token.AuthTokenProvider;
-import com.example.diary.global.properties.AppProperties;
+import com.example.diary.global.properties.AuthProperties;
 import com.example.diary.global.properties.CorsProperties;
+import com.example.diary.global.properties.OAuth2Properties;
 import com.example.diary.global.redis.RedisService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -37,8 +39,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private final CorsProperties corsProperties;
-    private final AppProperties appProperties;
-    private final AuthTokenProvider tokenProvider;
+    private final AuthProperties authProperties;
+    private final OAuth2Properties oAuth2Properties;
+    //    private final AuthTokenProvider tokenProvider;
     private final MemberRepository memberRepository;
 
     private final RedisService redisService;
@@ -47,6 +50,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+
                 .cors()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -60,6 +64,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests(auth -> auth
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                        .antMatchers("/", "/hello", "/login").permitAll()
                         .antMatchers("/h2-console/**").permitAll()
                         .antMatchers("/api/v1/sign/**").permitAll()
                         .antMatchers("/api/v1/**").hasRole(Role.MEMBER.name())
@@ -76,11 +81,17 @@ public class SecurityConfig {
                 .userService(oAuth2UserService)
                 .and()
                 .successHandler(oAuth2AuthenticationSuccessHandler())
-                .failureHandler(oAuth2AuthenticationFailureHandler())
-                .and()
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .failureHandler(oAuth2AuthenticationFailureHandler());
+
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring()
+                .antMatchers("/h2-console/**", "/css/**", "/image/**", "/js/**", "/fonts/**", "/favicon.ico");
     }
 
     /**
@@ -102,6 +113,11 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AuthTokenProvider tokenProvider() {
+        return new AuthTokenProvider(authProperties.getSecretKey());
+    }
+
+    @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
@@ -111,7 +127,7 @@ public class SecurityConfig {
      */
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(tokenProvider, redisService);
+        return new JwtAuthenticationFilter(tokenProvider(), redisService);
     }
 
     /**
@@ -125,8 +141,9 @@ public class SecurityConfig {
     @Bean
     public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
         return new OAuth2AuthenticationSuccessHandler(
-                tokenProvider,
-                appProperties,
+                tokenProvider(),
+                authProperties,
+                oAuth2Properties,
                 redisService,
                 oAuth2AuthorizationRequestBasedOnCookieRepository()
         );
