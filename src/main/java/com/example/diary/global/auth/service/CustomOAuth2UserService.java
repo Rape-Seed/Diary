@@ -7,6 +7,7 @@ import com.example.diary.domain.member.repository.MemberRepository;
 import com.example.diary.global.auth.entity.CustomUserDetails;
 import com.example.diary.global.auth.info.OAuth2UserInfo;
 import com.example.diary.global.auth.info.OAuth2UserInfoFactory;
+import com.example.diary.global.utils.RandomUtils;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
@@ -54,10 +55,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private Member createMember(OAuth2UserInfo userInfo, PlatformType platformType) {
-        //TODO code값 랜덤으로 넣는 로직 추가
         return Member.builder()
                 .name(userInfo.getName())
                 .email(userInfo.getEmail())
+                .code(new RandomUtils(15).nextString())
                 .birthday(LocalDate.parse(userInfo.getBirthday(), DateTimeFormatter.ISO_DATE))
                 .platform(platformType)
                 .role(Role.MEMBER)
