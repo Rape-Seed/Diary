@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,7 +20,6 @@ public class AuthTokenProvider {
 
     private static final String AUTH_KEY = "role";
 
-    @Value("${app.auth.tokenSecret}")
     private final String key;
 
     public AuthToken createAuthToken(String id, Date expiry) {
