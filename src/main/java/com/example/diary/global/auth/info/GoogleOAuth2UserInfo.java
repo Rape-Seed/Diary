@@ -22,4 +22,9 @@ public class GoogleOAuth2UserInfo extends OAuth2UserInfo {
     public String getBirthday() {
         return "2000-01-01";
     }
+
+    @Override
+    public String profileImage() {
+        return (String) attributes.get("picture");
+    }
 }

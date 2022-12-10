@@ -48,7 +48,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .map(entity -> entity.update(userInfo))
                 .orElse(createMember(userInfo, platformType));
 
-        log.info(member.getEmail() + "(님) 입니다.");
+        log.info(member.getEmail() + "(님) 께서 가입하셨습니다.");
         memberRepository.save(member);
 
         return new CustomUserDetails(member, oAuth2User.getAttributes());
@@ -58,7 +58,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return Member.builder()
                 .name(userInfo.getName())
                 .email(userInfo.getEmail())
-                .code(new RandomUtils(15).nextString())
+                .code(RandomUtils.make(20))
                 .birthday(LocalDate.parse(userInfo.getBirthday(), DateTimeFormatter.ISO_DATE))
                 .platform(platformType)
                 .role(Role.MEMBER)
