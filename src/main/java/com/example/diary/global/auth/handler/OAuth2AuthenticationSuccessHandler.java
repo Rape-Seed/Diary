@@ -4,6 +4,7 @@ import static com.example.diary.global.auth.repository.OAuth2AuthorizationReques
 import static com.example.diary.global.auth.repository.OAuth2AuthorizationRequestCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 import static com.example.diary.global.auth.repository.OAuth2AuthorizationRequestCookieRepository.REFRESH_TOKEN;
 
+import com.example.diary.domain.member.entity.LoginResponseDto;
 import com.example.diary.domain.member.entity.PlatformType;
 import com.example.diary.domain.member.entity.Role;
 import com.example.diary.global.auth.entity.CustomUserDetails;
@@ -13,9 +14,11 @@ import com.example.diary.global.auth.repository.OAuth2AuthorizationRequestCookie
 import com.example.diary.global.auth.token.AuthToken;
 import com.example.diary.global.auth.token.AuthTokenProvider;
 import com.example.diary.global.auth.util.CookieUtil;
+import com.example.diary.global.common.dto.ResponseDto;
 import com.example.diary.global.properties.AuthProperties;
 import com.example.diary.global.properties.OAuth2Properties;
 import com.example.diary.global.redis.RedisService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
@@ -26,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -37,8 +41,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+    private final ObjectMapper objectMapper;
     private final AuthTokenProvider tokenProvider;
-    //    private final AppProperties appProperties;
     private final AuthProperties authProperties;
     private final OAuth2Properties oAuth2Properties;
     private final RedisService redisService;
@@ -59,6 +63,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         addAccessTokenByCookie(request, response, accessToken);
         addRefreshTokenByCookie(request, response, refreshToken);
+
+        makeResponse(response, new LoginResponseDto(principal.getUsername(), accessToken, refreshToken));
 
         String targetUrl = determineTargetUrl(request, response, authentication);
 
@@ -105,6 +111,17 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         int cookieAccessMaxAge = (int) (new Date().getTime() + authProperties.getAccessTokenExpiry());
         CookieUtil.deleteCookie(request, response, ACCESS_TOKEN);
         CookieUtil.addCookie(response, ACCESS_TOKEN, accessToken, cookieAccessMaxAge, false);
+    }
+
+    private void makeResponse(HttpServletResponse response, LoginResponseDto loginResponseDto)
+            throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        response.getWriter().write(objectMapper.writeValueAsString(
+                new ResponseDto<>(loginResponseDto, "Login Success", HttpStatus.OK)
+        ));
     }
 
     private boolean isAuthorizedRedirectUri(String uri) {

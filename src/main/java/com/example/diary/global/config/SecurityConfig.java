@@ -15,6 +15,7 @@ import com.example.diary.global.properties.AuthProperties;
 import com.example.diary.global.properties.CorsProperties;
 import com.example.diary.global.properties.OAuth2Properties;
 import com.example.diary.global.redis.RedisService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -41,7 +42,8 @@ public class SecurityConfig {
     private final CorsProperties corsProperties;
     private final AuthProperties authProperties;
     private final OAuth2Properties oAuth2Properties;
-    //    private final AuthTokenProvider tokenProvider;
+
+    private final ObjectMapper objectMapper;
     private final MemberRepository memberRepository;
 
     private final RedisService redisService;
@@ -141,6 +143,7 @@ public class SecurityConfig {
     @Bean
     public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
         return new OAuth2AuthenticationSuccessHandler(
+                objectMapper,
                 tokenProvider(),
                 authProperties,
                 oAuth2Properties,
