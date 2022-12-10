@@ -20,6 +20,6 @@ public abstract class OAuth2UserInfo {
 
     public abstract String getBirthday();
 
-    public abstract String profileImage();
+    public abstract String getProfileImage();
 
 }

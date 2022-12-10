@@ -60,6 +60,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .email(userInfo.getEmail())
                 .code(RandomUtils.make(20))
                 .birthday(LocalDate.parse(userInfo.getBirthday(), DateTimeFormatter.ISO_DATE))
+                .profileImage(userInfo.getProfileImage())
                 .platform(platformType)
                 .role(Role.MEMBER)
                 .build();
