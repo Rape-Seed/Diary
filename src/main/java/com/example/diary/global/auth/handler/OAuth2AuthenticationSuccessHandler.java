@@ -3,9 +3,7 @@ package com.example.diary.global.auth.handler;
 import static com.example.diary.domain.member.entity.PlatformType.GOOGLE;
 import static com.example.diary.domain.member.entity.PlatformType.KAKAO;
 import static com.example.diary.domain.member.entity.PlatformType.valueOf;
-import static com.example.diary.global.auth.repository.OAuth2AuthorizationRequestCookieRepository.ACCESS_TOKEN;
 import static com.example.diary.global.auth.repository.OAuth2AuthorizationRequestCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
-import static com.example.diary.global.auth.repository.OAuth2AuthorizationRequestCookieRepository.REFRESH_TOKEN;
 
 import com.example.diary.domain.member.entity.LoginResponseDto;
 import com.example.diary.domain.member.entity.PlatformType;
@@ -64,8 +62,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String accessToken = createAccessToken(oAuth2UserInfo);
         String refreshToken = createRefreshToken(oAuth2UserInfo, principal);
 
-        addAccessTokenByCookie(request, response, accessToken);
-        addRefreshTokenByCookie(request, response, refreshToken);
+        CookieUtil.addAccessTokenByCookie(request, response, accessToken, authProperties);
+        CookieUtil.addRefreshTokenByCookie(request, response, refreshToken, authProperties);
 
         makeResponse(response, new LoginResponseDto(principal.getUsername(), accessToken, refreshToken));
 
@@ -101,19 +99,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
         super.clearAuthenticationAttributes(request);
         oAuthRepository.removeAuthorizationRequestCookies(request, response);
-    }
-
-    private void addRefreshTokenByCookie(HttpServletRequest request, HttpServletResponse response,
-                                         String refreshToken) {
-        int cookieRefreshMaxAge = (int) (new Date().getTime() + authProperties.getRefreshTokenExpiry());
-        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken, cookieRefreshMaxAge, true);
-    }
-
-    private void addAccessTokenByCookie(HttpServletRequest request, HttpServletResponse response, String accessToken) {
-        int cookieAccessMaxAge = (int) (new Date().getTime() + authProperties.getAccessTokenExpiry());
-        CookieUtil.deleteCookie(request, response, ACCESS_TOKEN);
-        CookieUtil.addCookie(response, ACCESS_TOKEN, accessToken, cookieAccessMaxAge, false);
     }
 
     private void makeResponse(HttpServletResponse response, LoginResponseDto loginResponseDto)
