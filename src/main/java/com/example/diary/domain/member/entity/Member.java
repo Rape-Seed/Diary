@@ -2,7 +2,7 @@ package com.example.diary.domain.member.entity;
 
 import com.example.diary.domain.diary.entity.Diary;
 import com.example.diary.domain.relation.entity.Relation;
-import com.example.diary.domain.team_member.entity.TeamMember;
+import com.example.diary.domain.team.entity.TeamMember;
 import com.example.diary.global.auth.info.OAuth2UserInfo;
 import com.example.diary.global.common.BaseEntity;
 import java.time.LocalDate;
