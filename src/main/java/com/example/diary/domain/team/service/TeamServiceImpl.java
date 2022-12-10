@@ -4,12 +4,15 @@ import com.example.diary.domain.member.entity.Member;
 import com.example.diary.domain.member.repository.MemberRepository;
 import com.example.diary.domain.team.dto.TeamInviteRequest;
 import com.example.diary.domain.team.dto.TeamInviteResponse;
+import com.example.diary.domain.team.dto.TeamReplyRequest;
+import com.example.diary.domain.team.dto.TeamReplyResponse;
 import com.example.diary.domain.team.entity.AcceptStatus;
 import com.example.diary.domain.team.entity.Team;
 import com.example.diary.domain.team.entity.TeamMember;
 import com.example.diary.domain.team.repository.TeamMemberRepository;
 import com.example.diary.domain.team.repository.TeamRepository;
 import com.example.diary.global.advice.exception.MemberNotFoundException;
+import com.example.diary.global.advice.exception.TeamNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class TeamDiaryServiceImpl implements TeamDiaryService {
+public class TeamServiceImpl implements TeamService {
 
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
@@ -40,6 +43,7 @@ public class TeamDiaryServiceImpl implements TeamDiaryService {
     private Team saveTeam(TeamInviteRequest teamInviteRequest) {
         Team team = Team.builder()
 //                .code(UUID.randomUUID().toString())
+                .name(teamInviteRequest.getTeamName())
                 .startDate(teamInviteRequest.getStartDate())
                 .endDate(teamInviteRequest.getEndDate())
                 .build();
@@ -71,7 +75,26 @@ public class TeamDiaryServiceImpl implements TeamDiaryService {
         Team team = saveTeam(teamInviteRequest);
         List<Member> members = getMembersById(teamInviteRequest.getFriends());
         List<TeamMember> teamMembers = getTeamMembers(team, members);
-
         return new TeamInviteResponse(teamMembers, team);
+    }
+
+    private Team findTeamById(Long teamId) {
+        return teamRepository.findById(teamId).orElseThrow(TeamNotFoundException::new);
+    }
+
+    @Transactional
+    @Override
+    public TeamReplyResponse replyTeam(TeamReplyRequest teamReplyRequest) {
+        Team team = findTeamById(teamReplyRequest.getTeamId());
+        Member member = findMemberById(teamReplyRequest.getMemberId());
+        TeamMember teamMember = teamMemberRepository.findTeamMemberByTeamAndMember(team, member);
+        teamMember.updateAcceptStatus(teamReplyRequest.getAcceptStatus());
+        return TeamReplyResponse.builder()
+                .teamId(team.getId())
+                .teamName(team.getName())
+                .memberId(member.getId())
+                .memberName(member.getName())
+                .acceptStatus(teamMember.getAcceptStatus())
+                .build();
     }
 }

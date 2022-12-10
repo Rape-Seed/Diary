@@ -32,10 +32,17 @@ public class TeamMember extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private AcceptStatus acceptStatus;
 
+    public TeamMember() {
+    }
+
     @Builder
     public TeamMember(Team team, Member member, AcceptStatus acceptStatus) {
         this.team = team;
         this.member = member;
+        this.acceptStatus = acceptStatus;
+    }
+
+    public void updateAcceptStatus(AcceptStatus acceptStatus) {
         this.acceptStatus = acceptStatus;
     }
 }
