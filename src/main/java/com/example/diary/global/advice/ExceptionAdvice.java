@@ -1,5 +1,6 @@
 package com.example.diary.global.advice;
 
+import com.example.diary.global.advice.exception.AlreadyJoinedMemberException;
 import com.example.diary.global.advice.exception.DiaryNotAuthorizedException;
 import com.example.diary.global.advice.exception.DiaryNotFoundException;
 import com.example.diary.global.advice.exception.DiaryWrongDateException;
@@ -14,6 +15,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ExceptionAdvice {
+
+    @ExceptionHandler(AlreadyJoinedMemberException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ExceptionResponse alreadyJoinedMemberException() {
+        return ExceptionResponse.getFailureResult(-101, "[ERROR] 이미 가입된 사용자입니다.");
+    }
 
     @ExceptionHandler(LoginFailureException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -32,6 +39,7 @@ public class ExceptionAdvice {
     public ExceptionResponse tokenValidFailedException() {
         return ExceptionResponse.getFailureResult(-103, "Failed to generate Token.");
     }
+
 
     @ExceptionHandler(DiaryNotFoundException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
