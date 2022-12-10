@@ -18,6 +18,7 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
     private final Role role;
     private final Collection<GrantedAuthority> authorities;
     private Map<String, Object> attributes;
+    private Boolean joined;
 
     public CustomUserDetails(Member member) {
         this.email = member.getEmail();
@@ -27,13 +28,18 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
         this.authorities = Collections.singletonList(new SimpleGrantedAuthority(Role.MEMBER.name()));
     }
 
-    public CustomUserDetails(Member member, Map<String, Object> attributes) {
+    public CustomUserDetails(Member member, Map<String, Object> attributes, boolean joined) {
         this.email = member.getEmail();
         this.code = member.getCode();
         this.platformType = member.getPlatform();
         this.role = member.getRole();
         this.authorities = Collections.singletonList(new SimpleGrantedAuthority(Role.MEMBER.name()));
         this.attributes = attributes;
+        this.joined = joined;
+    }
+
+    public Boolean getJoined() {
+        return joined;
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.example.diary.global.auth.handler;
 
+import static com.example.diary.domain.member.entity.PlatformType.GOOGLE;
+import static com.example.diary.domain.member.entity.PlatformType.KAKAO;
+import static com.example.diary.domain.member.entity.PlatformType.valueOf;
 import static com.example.diary.global.auth.repository.OAuth2AuthorizationRequestCookieRepository.ACCESS_TOKEN;
 import static com.example.diary.global.auth.repository.OAuth2AuthorizationRequestCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 import static com.example.diary.global.auth.repository.OAuth2AuthorizationRequestCookieRepository.REFRESH_TOKEN;
@@ -53,7 +56,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                                         Authentication authentication) throws IOException, ServletException {
 
         OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
-        PlatformType platformType = PlatformType.valueOf(authToken.getAuthorizedClientRegistrationId().toUpperCase());
+        PlatformType platformType = valueOf(authToken.getAuthorizedClientRegistrationId().toUpperCase());
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(platformType,
                 principal.getAttributes());
@@ -66,7 +69,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         makeResponse(response, new LoginResponseDto(principal.getUsername(), accessToken, refreshToken));
 
-        String targetUrl = determineTargetUrl(request, response, authentication);
+        String targetUrl = determineTargetUrl(request, response, platformType, principal);
 
         if (response.isCommitted()) {
             log.debug("Response has already been committed. Unable to redirect to " + targetUrl);
@@ -77,21 +80,21 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
-    @Override
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) {
-        //TODO 로그인 하기 이전 페이지를 기억해서 이전 페이지로 리다이렉션 해야함
-        //TODO 최초로그인 시 생년월일 확인하는 페이지로 리다이렉션
+                                        PlatformType platformType, CustomUserDetails principal) {
         Optional<String> redirectUri = CookieUtil.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue);
 
         if (redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
             throw new IllegalArgumentException("승인되지 않은 Redirect URL가 존재합니다.");
         }
+        if (!principal.getJoined()) {
+            if (platformType == GOOGLE || platformType == KAKAO) {
+                return UriComponentsBuilder.fromUriString("/api/v1/members").toUriString();
+            }
+        }
 
-        String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
-
-        return UriComponentsBuilder.fromUriString(targetUrl)
+        return UriComponentsBuilder.fromUriString(redirectUri.orElse(getDefaultTargetUrl()))
                 .build().toUriString();
     }
 
