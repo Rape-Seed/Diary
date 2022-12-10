@@ -1,7 +1,9 @@
 package com.example.diary.global.common.dto;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+@Getter
 public class ResponseDto<T> {
 
     private T response;

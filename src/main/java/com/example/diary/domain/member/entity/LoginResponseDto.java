@@ -1,6 +1,11 @@
 package com.example.diary.domain.member.entity;
 
 
+import lombok.Getter;
+import lombok.ToString;
+
+@Getter
+@ToString
 public class LoginResponseDto {
     private String email;
     private String accessToken;
@@ -11,4 +16,5 @@ public class LoginResponseDto {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
+
 }
