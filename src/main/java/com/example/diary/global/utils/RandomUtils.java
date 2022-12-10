@@ -6,27 +6,28 @@ import java.util.Objects;
 import java.util.Random;
 
 public class RandomUtils {
-    public static final String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    public static final String lower = upper.toLowerCase(Locale.ROOT);
-    public static final String digits = "0123456789";
-    public static final String alphanum = upper + lower + digits;
+    private static final String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String lower = upper.toLowerCase(Locale.ROOT);
+    private static final String digits = "0123456789";
+    private static final String alphanum = upper + lower + digits;
+    private static final int DEFAULT_LENGTH = 21;
     private final Random random;
     private final char[] symbols;
     private final char[] buf;
 
-    public RandomUtils() {
-        this(21);
+    private RandomUtils() {
+        this(DEFAULT_LENGTH);
     }
 
-    public RandomUtils(int length) {
+    private RandomUtils(int length) {
         this(length, new SecureRandom());
     }
 
-    public RandomUtils(int length, Random random) {
+    private RandomUtils(int length, Random random) {
         this(length, random, alphanum);
     }
 
-    public RandomUtils(int length, Random random, String symbols) {
+    private RandomUtils(int length, Random random, String symbols) {
         if (length < 1) {
             throw new IllegalArgumentException();
         }
@@ -38,10 +39,27 @@ public class RandomUtils {
         this.buf = new char[length];
     }
 
-    public String nextString() {
+    private String nextString() {
         for (int idx = 0; idx < buf.length; ++idx) {
             buf[idx] = symbols[random.nextInt(symbols.length)];
         }
         return new String(buf);
     }
+
+    public static String make() {
+        return new RandomUtils().nextString();
+    }
+
+    public static String make(int length) {
+        return new RandomUtils(length).nextString();
+    }
+
+    public static String make(int length, Random random) {
+        return new RandomUtils(length, random).nextString();
+    }
+
+    public static String make(int length, Random random, String symbols) {
+        return new RandomUtils(length, random, symbols).nextString();
+    }
+
 }
