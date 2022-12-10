@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RedisService {
 
+    public static final String BLACKLIST = "BLACKLIST ";
     private final RedisTemplate redisTemplate;
 
     public String getData(String key) {
@@ -18,7 +19,7 @@ public class RedisService {
     }
 
     public String findBlackList(String token) {
-        return (String) redisTemplate.opsForValue().get("BLACKLIST " + token);
+        return (String) redisTemplate.opsForValue().get(BLACKLIST + token.substring(0, 10));
     }
 
     public void setDataWithExpiration(String key, String value, Long time) {
