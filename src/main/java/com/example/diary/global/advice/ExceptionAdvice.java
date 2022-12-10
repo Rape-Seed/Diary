@@ -2,6 +2,7 @@ package com.example.diary.global.advice;
 
 import com.example.diary.global.advice.exception.LoginFailureException;
 import com.example.diary.global.advice.exception.MemberNotFoundException;
+import com.example.diary.global.advice.exception.TokenValidFailedException;
 import com.example.diary.global.advice.exceptionDto.ExceptionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,5 +22,11 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ExceptionResponse memberNotFoundException() {
         return ExceptionResponse.getFailureResult(-103, "해당 멤버를 찾을 수 없습니다.");
+    }
+
+    @ExceptionHandler(TokenValidFailedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ExceptionResponse tokenValidFailedException() {
+        return ExceptionResponse.getFailureResult(-104, "Failed to generate Token.");
     }
 }
