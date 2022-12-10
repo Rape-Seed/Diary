@@ -1,6 +1,7 @@
 package com.example.diary.global.auth.info;
 
 import static com.example.diary.domain.member.entity.PlatformType.GOOGLE;
+import static com.example.diary.domain.member.entity.PlatformType.KAKAO;
 import static com.example.diary.domain.member.entity.PlatformType.NAVER;
 
 import com.example.diary.domain.member.entity.PlatformType;
@@ -14,6 +15,9 @@ public class OAuth2UserInfoFactory {
         }
         if (platformType == NAVER) {
             return new NaverOAuth2UserInfo(attributes);
+        }
+        if (platformType == KAKAO) {
+            return new KakaoOAuth2UserInfo(attributes);
         }
 
         throw new IllegalArgumentException("[ERROR] Invalid PlatForm Info");
