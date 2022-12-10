@@ -13,6 +13,8 @@ import lombok.Data;
 @Data
 public class TeamInviteResponse {
 
+    private Long teamId;
+
     private List<MemberDto> friends;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
