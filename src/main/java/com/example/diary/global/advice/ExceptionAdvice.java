@@ -1,8 +1,5 @@
 package com.example.diary.global.advice;
 
-import com.example.diary.global.advice.exception.DiaryNotAuthorizedException;
-import com.example.diary.global.advice.exception.DiaryNotFoundException;
-import com.example.diary.global.advice.exception.DiaryWrongDateException;
 import com.example.diary.global.advice.exception.LoginFailureException;
 import com.example.diary.global.advice.exception.MemberNotFoundException;
 import com.example.diary.global.advice.exceptionDto.ExceptionResponse;
@@ -24,6 +21,12 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ExceptionResponse memberNotFoundException() {
         return ExceptionResponse.getFailureResult(-103, "해당 멤버를 찾을 수 없습니다.");
+    }
+
+    @ExceptionHandler(TokenValidFailedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ExceptionResponse tokenValidFailedException() {
+        return ExceptionResponse.getFailureResult(-104, "Failed to generate Token.");
     }
 
     @ExceptionHandler(DiaryNotFoundException.class)

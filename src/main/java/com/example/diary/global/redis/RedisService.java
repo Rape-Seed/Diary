@@ -17,6 +17,10 @@ public class RedisService {
         return (String) redisTemplate.opsForValue().get(key);
     }
 
+    public String findBlackList(String token) {
+        return (String) redisTemplate.opsForValue().get("BLACKLIST " + token);
+    }
+
     public void setDataWithExpiration(String key, String value, Long time) {
         if (this.getData(key) != null) {
             this.deleteData(key);
