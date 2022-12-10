@@ -8,7 +8,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import lombok.Getter;
 
+@Getter
 @Entity
 public class Emotion extends BaseEntity {
 

@@ -2,7 +2,7 @@ package com.example.diary.domain.member.entity;
 
 import com.example.diary.domain.diary.entity.Diary;
 import com.example.diary.domain.relation.entity.Relation;
-import com.example.diary.domain.team_member.entity.TeamMember;
+import com.example.diary.domain.team.entity.TeamMember;
 import com.example.diary.global.auth.info.OAuth2UserInfo;
 import com.example.diary.global.common.BaseEntity;
 import java.time.LocalDate;
@@ -33,7 +33,11 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long id;
+
     private String name;
+
+    private String profileImage;
+
     private String email;
 
     private String code;

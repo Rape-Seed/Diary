@@ -1,5 +1,6 @@
 package com.example.diary.domain.diary.entity;
 
+import com.example.diary.domain.diary.dto.DiaryUpdateRequest;
 import com.example.diary.domain.emotion.entity.Emotion;
 import com.example.diary.domain.member.entity.Member;
 import com.example.diary.domain.team.entity.Team;
@@ -13,7 +14,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 @Entity
 public class Diary extends BaseEntity {
 
@@ -53,5 +56,9 @@ public class Diary extends BaseEntity {
         this.emotion = emotion;
         this.team = team;
         this.date = date;
+    }
+
+    public void updatePersonal(DiaryUpdateRequest diaryUpdateRequest) {
+        this.content = diaryUpdateRequest.getContent();
     }
 }

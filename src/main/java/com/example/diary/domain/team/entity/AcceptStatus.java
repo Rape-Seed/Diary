@@ -1,4 +1,4 @@
-package com.example.diary.domain.team_member.entity;
+package com.example.diary.domain.team.entity;
 
 public enum AcceptStatus {
     APPROVE,
