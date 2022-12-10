@@ -13,6 +13,8 @@ import com.example.diary.domain.team.repository.TeamMemberRepository;
 import com.example.diary.domain.team.repository.TeamRepository;
 import com.example.diary.global.advice.exception.MemberNotFoundException;
 import com.example.diary.global.advice.exception.TeamNotFoundException;
+import com.example.diary.global.advice.exception.WrongDateException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -69,9 +71,23 @@ public class TeamServiceImpl implements TeamService {
         return teamMemberRepository.save(teamMember);
     }
 
+    private void checkAvailableDate(LocalDate date, LocalDate currentDate) {
+        if (date.isBefore(currentDate) || date.plusDays(1).isAfter(currentDate)) {
+            throw new WrongDateException();
+        }
+    }
+
+    private void checkStartDate(LocalDate startDate, LocalDate endDate) {
+        if (startDate.isAfter(endDate)) {
+            throw new WrongDateException();
+        }
+    }
+
     @Transactional
     @Override
     public TeamInviteResponse inviteTeam(TeamInviteRequest teamInviteRequest) {
+        checkAvailableDate(teamInviteRequest.getStartDate(), teamInviteRequest.getCurrentTime().toLocalDate());
+        checkStartDate(teamInviteRequest.getStartDate(), teamInviteRequest.getEndDate());
         Team team = saveTeam(teamInviteRequest);
         List<Member> members = getMembersById(teamInviteRequest.getFriends());
         List<TeamMember> teamMembers = getTeamMembers(team, members);
