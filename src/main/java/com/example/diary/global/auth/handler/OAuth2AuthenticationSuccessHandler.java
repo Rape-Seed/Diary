@@ -88,7 +88,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
         if (!principal.getJoined()) {
             if (platformType == GOOGLE || platformType == KAKAO) {
-                return UriComponentsBuilder.fromUriString("/api/v1/members").toUriString();
+                return UriComponentsBuilder.fromUriString("/api/v1/member/myInfo").toUriString();
             }
         }
 
