@@ -12,6 +12,10 @@ public class ResponseDto<T> {
 
     private HttpStatus status;
 
+    public ResponseDto(String message, HttpStatus status) {
+        this(null, message, status);
+    }
+
     public ResponseDto(T response, HttpStatus status) {
         this(response, "", status);
     }
