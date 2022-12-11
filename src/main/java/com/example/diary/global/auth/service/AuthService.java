@@ -8,4 +8,5 @@ import javax.servlet.http.HttpServletResponse;
 public interface AuthService {
     ResponseDto<?> refreshToken(HttpServletRequest request, HttpServletResponse response, Member member);
 
+    ResponseDto<?> signOut(HttpServletRequest request, HttpServletResponse response, Member member);
 }

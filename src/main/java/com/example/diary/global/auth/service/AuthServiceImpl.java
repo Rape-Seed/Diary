@@ -1,5 +1,6 @@
 package com.example.diary.global.auth.service;
 
+import static com.example.diary.global.auth.repository.OAuth2AuthorizationRequestCookieRepository.ACCESS_TOKEN;
 import static com.example.diary.global.auth.repository.OAuth2AuthorizationRequestCookieRepository.REFRESH_TOKEN;
 import static com.example.diary.global.redis.RedisService.BLACKLIST;
 
@@ -57,16 +58,16 @@ public class AuthServiceImpl implements AuthService {
         }
 
         String newAccessToken = createAccessToken(emailFromRefreshToken);
-        String updateRefreshToken = updateRefreshToken(refreshToken, emailFromRefreshToken);
+        refreshToken = updateToken(refreshToken, emailFromRefreshToken);
 
         CookieUtil.addAccessTokenByCookie(request, response, newAccessToken, authProperties);
-        CookieUtil.addRefreshTokenByCookie(request, response, updateRefreshToken, authProperties);
+        CookieUtil.addRefreshTokenByCookie(request, response, refreshToken, authProperties);
 
-        return new ResponseDto<>(new TokenResponseDto(newAccessToken, updateRefreshToken),
+        return new ResponseDto<>(new TokenResponseDto(newAccessToken, refreshToken),
                 "AccessToken update Success", HttpStatus.OK);
     }
 
-    private String updateRefreshToken(String refreshToken, String emailFromRefreshToken) {
+    private String updateToken(String refreshToken, String emailFromRefreshToken) {
         if (authTokenProvider.getTokenExpiry(refreshToken) <= THREE_DAYS) {
             redisService.setDataWithExpiration(BLACKLIST + refreshToken.substring(0, 10),
                     refreshToken,
@@ -119,4 +120,36 @@ public class AuthServiceImpl implements AuthService {
         }
         return null;
     }
+
+    @Override
+    public ResponseDto<?> signOut(HttpServletRequest request, HttpServletResponse response, Member member) {
+        String accessToken = HeaderUtil.getAccessToken(request);
+        ResponseDto<?> checkAccessToken = checkTokenStatus(authTokenProvider.convertAuthToken(accessToken));
+        if (checkAccessToken != null) {
+            return checkAccessToken;
+        }
+        String refreshToken = CookieUtil.getToken(request, REFRESH_TOKEN);
+        ResponseDto<?> checkRefreshToken = checkTokenStatus(authTokenProvider.convertAuthToken(refreshToken));
+        if (checkRefreshToken != null) {
+            return checkRefreshToken;
+        }
+
+        String emailFromRefreshToken = redisService.getData(member.getEmail());
+        ResponseDto<?> checkEmail = checkValidMember(emailFromRefreshToken);
+        if (checkEmail != null) {
+            return checkEmail;
+        }
+        redisService.setDataWithExpiration(BLACKLIST + accessToken.substring(0, 10),
+                accessToken, authTokenProvider.getTokenExpiry(accessToken));
+
+        redisService.setDataWithExpiration(BLACKLIST + refreshToken.substring(0, 10),
+                refreshToken, authTokenProvider.getTokenExpiry(refreshToken));
+        redisService.deleteData(emailFromRefreshToken);
+
+        CookieUtil.deleteCookie(request, response, ACCESS_TOKEN);
+        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+
+        return new ResponseDto<>("Logout Success", HttpStatus.OK);
+    }
+
 }
