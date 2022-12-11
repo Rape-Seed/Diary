@@ -13,6 +13,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException, ServletException {
         response.sendError(HttpServletResponse.SC_FORBIDDEN);
-        response.sendRedirect(UriComponentsBuilder.fromUriString("/api/v1/members").toUriString());
+        response.sendRedirect(UriComponentsBuilder.fromUriString("/api/v1/sign").toUriString());
     }
 }
