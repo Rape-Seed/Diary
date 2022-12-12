@@ -72,11 +72,20 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return Member.builder()
                 .name(userInfo.getName())
                 .email(userInfo.getEmail())
-                .code(RandomUtils.make(20))
+                .code(createMemberCode())
                 .birthday(LocalDate.parse(userInfo.getBirthday(), DateTimeFormatter.ISO_DATE))
                 .profileImage(userInfo.getProfileImage())
                 .platform(platformType)
                 .role(Role.MEMBER)
                 .build();
+    }
+
+    private String createMemberCode() {
+        while (true) {
+            String createCode = RandomUtils.make(20);
+            if (!memberRepository.existsByCode(createCode)) {
+                return createCode;
+            }
+        }
     }
 }

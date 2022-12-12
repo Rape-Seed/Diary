@@ -43,6 +43,7 @@ public class Member extends BaseEntity {
 
     private String email;
 
+    @Column(unique = true)
     private String code;
 
     private LocalDate birthday;
