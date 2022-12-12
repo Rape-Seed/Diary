@@ -1,11 +1,9 @@
-package com.example.diary.domain.member.entity;
+package com.example.diary.global.auth.dto;
 
 
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
-@ToString
 public class LoginResponseDto {
     private String email;
     private String accessToken;
