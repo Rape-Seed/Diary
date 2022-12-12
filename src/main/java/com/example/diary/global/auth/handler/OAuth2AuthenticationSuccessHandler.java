@@ -5,9 +5,9 @@ import static com.example.diary.domain.member.entity.PlatformType.KAKAO;
 import static com.example.diary.domain.member.entity.PlatformType.valueOf;
 import static com.example.diary.global.auth.repository.OAuth2AuthorizationRequestCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 
-import com.example.diary.domain.member.entity.LoginResponseDto;
 import com.example.diary.domain.member.entity.PlatformType;
 import com.example.diary.domain.member.entity.Role;
+import com.example.diary.global.auth.dto.LoginResponseDto;
 import com.example.diary.global.auth.entity.CustomUserDetails;
 import com.example.diary.global.auth.info.OAuth2UserInfo;
 import com.example.diary.global.auth.info.OAuth2UserInfoFactory;
