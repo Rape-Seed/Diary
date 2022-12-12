@@ -4,6 +4,8 @@ import com.example.diary.domain.member.entity.Member;
 import com.example.diary.global.common.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,5 +27,8 @@ public class Relation extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member friend;
+
+    @Enumerated(EnumType.STRING)
+    private RelationType relationType;
 
 }
