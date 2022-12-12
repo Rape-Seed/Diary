@@ -22,4 +22,9 @@ public class MemberServiceImpl implements MemberService {
     public MyInfoResponseDto updateMyInfo(Member member, MyInfoRequestDto dto) {
         return new MyInfoResponseDto(memberRepository.save(member.update(dto)));
     }
+
+    @Override
+    public String getMemberCode(Member member) {
+        return member.getCode();
+    }
 }

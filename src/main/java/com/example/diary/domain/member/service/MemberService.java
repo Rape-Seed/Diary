@@ -10,4 +10,6 @@ public interface MemberService {
     MyInfoResponseDto getMyInfo(Member member);
 
     MyInfoResponseDto updateMyInfo(Member member, MyInfoRequestDto dto);
+
+    String getMemberCode(Member member);
 }
