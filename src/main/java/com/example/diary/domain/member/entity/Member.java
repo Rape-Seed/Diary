@@ -90,7 +90,7 @@ public class Member extends BaseEntity {
             this.birthday = birthday;
         }
         if (!this.profileImage.equals(dto.getProfileImage())) {
-            this.profileImage = profileImage;
+            this.profileImage = dto.getProfileImage();
         }
 
         return this;
