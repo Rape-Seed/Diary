@@ -4,6 +4,7 @@ import com.example.diary.global.advice.exception.AlreadyJoinedMemberException;
 import com.example.diary.global.advice.exception.DiaryNotAuthorizedException;
 import com.example.diary.global.advice.exception.DiaryNotFoundException;
 import com.example.diary.global.advice.exception.DiaryWrongDateException;
+import com.example.diary.global.advice.exception.FriendNotAuthorizedException;
 import com.example.diary.global.advice.exception.LoginFailureException;
 import com.example.diary.global.advice.exception.MemberNotFoundException;
 import com.example.diary.global.advice.exception.TokenValidFailedException;
@@ -58,4 +59,12 @@ public class ExceptionAdvice {
     public ExceptionResponse diaryWrongDateException() {
         return ExceptionResponse.getFailureResult(-203, "해당 날짜의 일기를 작성할 수 없습니다.");
     }
+
+
+    @ExceptionHandler(FriendNotAuthorizedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ExceptionResponse friendNotAuthorizedException() {
+        return ExceptionResponse.getFailureResult(-501, "해당 사용자에 대한 접근 권한이 없습니다.");
+    }
+
 }
