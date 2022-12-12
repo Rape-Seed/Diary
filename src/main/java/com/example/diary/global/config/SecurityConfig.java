@@ -9,7 +9,6 @@ import com.example.diary.global.auth.handler.OAuth2AuthenticationFailureHandler;
 import com.example.diary.global.auth.handler.OAuth2AuthenticationSuccessHandler;
 import com.example.diary.global.auth.repository.OAuth2AuthorizationRequestCookieRepository;
 import com.example.diary.global.auth.service.CustomOAuth2UserService;
-import com.example.diary.global.auth.service.CustomUserDetailsService;
 import com.example.diary.global.auth.token.AuthTokenProvider;
 import com.example.diary.global.properties.AuthProperties;
 import com.example.diary.global.properties.CorsProperties;
@@ -20,7 +19,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -103,15 +101,6 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
             throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    /**
-     * UserDetailService설정
-     */
-    @Bean
-    public CustomUserDetailsService userDetailsService(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-        return new CustomUserDetailsService(memberRepository);
     }
 
     @Bean
