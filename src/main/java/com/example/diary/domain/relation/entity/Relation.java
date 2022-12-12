@@ -31,4 +31,18 @@ public class Relation extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private RelationType relationType;
 
+    public void setMember(Member member) {
+        if (this.member != null) {
+            this.member.getRelations().remove(this);
+        }
+        this.member = member;
+        member.getRelations().add(this);
+    }
 }
+
+/*
+TODO
+1. 친구 조회(임시친구, 확정친구)
+2. 친구 추가
+3. 친구 검색
+ */
