@@ -5,6 +5,7 @@ import com.example.diary.domain.member.dto.MyInfoResponseDto;
 import com.example.diary.domain.member.entity.CurrentMember;
 import com.example.diary.domain.member.entity.Member;
 import com.example.diary.domain.member.service.MemberService;
+import com.example.diary.global.common.dto.ResponseDto;
 import com.example.diary.global.utils.QRUtils;
 import com.google.zxing.WriterException;
 import java.io.IOException;
@@ -26,13 +27,14 @@ public class MemberApiController {
     private final MemberService memberService;
 
     @GetMapping("/v1/member/myInfo")
-    public ResponseEntity<MyInfoResponseDto> getMyInfo(@CurrentMember Member member) {
-        return new ResponseEntity<>(memberService.getMyInfo(member), HttpStatus.OK);
+    public ResponseDto<MyInfoResponseDto> getMyInfo(@CurrentMember Member member) {
+        return new ResponseDto<>(memberService.getMyInfo(member), HttpStatus.OK);
     }
 
     @PutMapping("/v1/member/myInfo")
-    public ResponseEntity<?> updateMyInfo(@CurrentMember Member member, @RequestBody MyInfoRequestDto dto) {
-        return new ResponseEntity<>(memberService.updateMyInfo(member, dto), HttpStatus.OK);
+    public ResponseDto<MyInfoResponseDto> updateMyInfo(@CurrentMember Member member,
+                                                       @RequestBody MyInfoRequestDto dto) {
+        return new ResponseDto<>(memberService.updateMyInfo(member, dto), HttpStatus.OK);
     }
 
     @GetMapping("/v1/member/code")
