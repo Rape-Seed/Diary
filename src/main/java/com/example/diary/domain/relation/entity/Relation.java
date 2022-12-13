@@ -1,5 +1,7 @@
 package com.example.diary.domain.relation.entity;
 
+import static com.example.diary.domain.relation.entity.RelationType.ACCEPT;
+
 import com.example.diary.domain.member.entity.Member;
 import com.example.diary.global.common.BaseEntity;
 import javax.persistence.Column;
@@ -31,6 +33,20 @@ public class Relation extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private RelationType relationType;
 
+    public Relation() {
+    }
+
+    public Relation(Member member, Member friend, RelationType relationType) {
+        setMember(member);
+        setFriend(friend);
+        this.relationType = relationType;
+    }
+
+    public Relation acceptRelation() {
+        this.relationType = ACCEPT;
+        return this;
+    }
+
     public void setMember(Member member) {
         if (this.member != null) {
             this.member.getRelations().remove(this);
@@ -38,11 +54,12 @@ public class Relation extends BaseEntity {
         this.member = member;
         member.getRelations().add(this);
     }
-}
 
-/*
-TODO
-1. 친구 조회(임시친구, 확정친구)
-2. 친구 추가
-3. 친구 검색
- */
+    public void setFriend(Member friend) {
+        if (this.friend != null) {
+            this.friend.getRelations().remove(this);
+        }
+        this.friend = friend;
+        friend.getRelations().add(this);
+    }
+}
