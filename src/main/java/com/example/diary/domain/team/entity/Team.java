@@ -22,6 +22,8 @@ public class Team extends BaseEntity {
     @Column(name = "team_id")
     private Long id;
 
+    private String name;
+
     private String code;
 
     @Builder.Default
@@ -36,7 +38,8 @@ public class Team extends BaseEntity {
     }
 
     @Builder
-    public Team(String code, LocalDate startDate, LocalDate endDate) {
+    public Team(String name, String code, LocalDate startDate, LocalDate endDate) {
+        this.name = name;
         this.code = code;
         this.startDate = startDate;
         this.endDate = endDate;
