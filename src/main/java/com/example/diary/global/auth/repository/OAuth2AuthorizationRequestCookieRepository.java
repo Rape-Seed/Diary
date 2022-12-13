@@ -1,6 +1,6 @@
 package com.example.diary.global.auth.repository;
 
-import com.example.diary.global.auth.util.CookieUtil;
+import com.example.diary.global.utils.CookieUtil;
 import com.nimbusds.oauth2.sdk.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

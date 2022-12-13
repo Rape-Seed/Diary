@@ -1,7 +1,6 @@
 package com.example.diary.global.auth.entity;
 
 import com.example.diary.domain.member.entity.Member;
-import com.example.diary.domain.member.entity.PlatformType;
 import com.example.diary.domain.member.entity.Role;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,28 +11,25 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 public class CustomUserDetails implements UserDetails, OAuth2User {
-    private final String email;
-    private final String code;
-    private final PlatformType platformType;
-    private final Role role;
+    private final Member member;
     private final Collection<GrantedAuthority> authorities;
     private Map<String, Object> attributes;
+    private Boolean joined;
 
     public CustomUserDetails(Member member) {
-        this.email = member.getEmail();
-        this.code = member.getCode();
-        this.platformType = member.getPlatform();
-        this.role = member.getRole();
+        this.member = member;
         this.authorities = Collections.singletonList(new SimpleGrantedAuthority(Role.MEMBER.name()));
     }
 
-    public CustomUserDetails(Member member, Map<String, Object> attributes) {
-        this.email = member.getEmail();
-        this.code = member.getCode();
-        this.platformType = member.getPlatform();
-        this.role = member.getRole();
+    public CustomUserDetails(Member member, Map<String, Object> attributes, boolean joined) {
+        this.member = member;
         this.authorities = Collections.singletonList(new SimpleGrantedAuthority(Role.MEMBER.name()));
         this.attributes = attributes;
+        this.joined = joined;
+    }
+
+    public Boolean getJoined() {
+        return joined;
     }
 
     @Override
@@ -48,17 +44,17 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
 
     @Override
     public String getName() {
-        return email;
+        return this.member.getName();
     }
 
     @Override
     public String getPassword() {
-        return this.code;
+        return this.member.getCode();
     }
 
     @Override
     public String getUsername() {
-        return this.email;
+        return this.member.getEmail();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.example.diary.global.auth.util;
+package com.example.diary.global.utils;
 
 import javax.servlet.http.HttpServletRequest;
 

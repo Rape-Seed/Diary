@@ -3,7 +3,7 @@ package com.example.diary.global.auth.handler;
 import static com.example.diary.global.auth.repository.OAuth2AuthorizationRequestCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 
 import com.example.diary.global.auth.repository.OAuth2AuthorizationRequestCookieRepository;
-import com.example.diary.global.auth.util.CookieUtil;
+import com.example.diary.global.utils.CookieUtil;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;

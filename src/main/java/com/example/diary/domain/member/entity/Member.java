@@ -1,6 +1,7 @@
 package com.example.diary.domain.member.entity;
 
 import com.example.diary.domain.diary.entity.Diary;
+import com.example.diary.domain.member.dto.MyInfoRequestDto;
 import com.example.diary.domain.relation.entity.Relation;
 import com.example.diary.domain.team.entity.TeamMember;
 import com.example.diary.global.auth.info.OAuth2UserInfo;
@@ -16,6 +17,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,10 +38,12 @@ public class Member extends BaseEntity {
 
     private String name;
 
+    @Lob
     private String profileImage;
 
     private String email;
 
+    @Column(unique = true)
     private String code;
 
     private LocalDate birthday;
@@ -63,12 +67,30 @@ public class Member extends BaseEntity {
     private List<TeamMember> teamMembers = new ArrayList<>();
 
     public Member update(OAuth2UserInfo userInfo) {
-        if (userInfo.getName() != null && !this.email.equals(userInfo.getEmail())) {
+        if (userInfo.getName() != null && !this.name.equals(userInfo.getName())) {
             this.name = userInfo.getName();
         }
         LocalDate birthday = LocalDate.parse(userInfo.getBirthday(), DateTimeFormatter.ISO_DATE);
         if (userInfo.getBirthday() != null && !this.birthday.equals(birthday)) {
             this.birthday = birthday;
+        }
+        if (userInfo.getEmail() != null && !this.email.equals(userInfo.getEmail())) {
+            this.email = email;
+        }
+
+        return this;
+    }
+
+    public Member update(MyInfoRequestDto dto) {
+        if (!this.name.equals(dto.getName())) {
+            this.name = dto.getName();
+        }
+        LocalDate birthday = LocalDate.parse(dto.getBirthday());
+        if (!this.birthday.isEqual(birthday)) {
+            this.birthday = birthday;
+        }
+        if (!this.profileImage.equals(dto.getProfileImage())) {
+            this.profileImage = dto.getProfileImage();
         }
 
         return this;

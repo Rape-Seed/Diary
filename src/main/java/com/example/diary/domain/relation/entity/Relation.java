@@ -1,9 +1,13 @@
 package com.example.diary.domain.relation.entity;
 
+import static com.example.diary.domain.relation.entity.RelationType.ACCEPT;
+
 import com.example.diary.domain.member.entity.Member;
 import com.example.diary.global.common.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,4 +30,36 @@ public class Relation extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member friend;
 
+    @Enumerated(EnumType.STRING)
+    private RelationType relationType;
+
+    public Relation() {
+    }
+
+    public Relation(Member member, Member friend, RelationType relationType) {
+        setMember(member);
+        setFriend(friend);
+        this.relationType = relationType;
+    }
+
+    public Relation acceptRelation() {
+        this.relationType = ACCEPT;
+        return this;
+    }
+
+    public void setMember(Member member) {
+        if (this.member != null) {
+            this.member.getRelations().remove(this);
+        }
+        this.member = member;
+        member.getRelations().add(this);
+    }
+
+    public void setFriend(Member friend) {
+        if (this.friend != null) {
+            this.friend.getRelations().remove(this);
+        }
+        this.friend = friend;
+        friend.getRelations().add(this);
+    }
 }
