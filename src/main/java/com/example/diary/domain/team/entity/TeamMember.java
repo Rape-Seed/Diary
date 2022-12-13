@@ -41,4 +41,8 @@ public class TeamMember extends BaseEntity {
         this.member = member;
         this.acceptStatus = acceptStatus;
     }
+
+    public void updateAcceptStatus(AcceptStatus acceptStatus) {
+        this.acceptStatus = acceptStatus;
+    }
 }
