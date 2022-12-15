@@ -1,14 +1,15 @@
 package com.example.diary.domain.relation.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
 public class RelationRequestDto {
     private String code;
 
-    public String getCode() {
-        return code;
+    public RelationRequestDto() {
+    }
+
+    public RelationRequestDto(String code) {
+        this.code = code;
     }
 }
