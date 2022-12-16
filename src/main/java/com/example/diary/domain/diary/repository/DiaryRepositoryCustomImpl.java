@@ -6,7 +6,6 @@ import static com.example.diary.domain.team.entity.QTeam.team;
 
 import com.example.diary.domain.diary.entity.Diary;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -16,11 +15,11 @@ public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
-    public Diary findDiaryByMemberIdAndTeamIdAndDate(Long memberId, Long teamId, LocalDate date) {
+    public Diary findDiaryByDiaryId(Long diaryId) {
         return queryFactory.selectFrom(diary)
                 .join(diary.member, member).fetchJoin()
                 .join(diary.team, team).fetchJoin()
-                .where(diary.team.id.eq(teamId), diary.member.id.eq(memberId), diary.date.eq(date))
+                .where(diary.id.eq(diaryId))
                 .fetchOne();
     }
 }
