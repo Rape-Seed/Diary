@@ -8,7 +8,7 @@ import com.example.diary.domain.diary.repository.DiaryRepository;
 import com.example.diary.domain.member.entity.Member;
 import com.example.diary.global.advice.exception.DiaryNotAuthorizedException;
 import com.example.diary.global.advice.exception.DiaryNotFoundException;
-import com.example.diary.global.advice.exception.DiaryWrongDateException;
+import com.example.diary.global.advice.exception.WrongDateException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class DiaryServiceImpl implements DiaryService {
+public class DiaryPersonalServiceImpl implements DiaryPersonalService {
 
     private final DiaryRepository diaryRepository;
 
@@ -30,7 +30,7 @@ public class DiaryServiceImpl implements DiaryService {
         checkAuthorization(member, diary);
         return DiaryResponse.builder()
                 .diaryId(diary.getId())
-                .member(diary.getMember().getName())
+                .memberName(diary.getMember().getName())
                 .content(diary.getContent())
                 .emotion(diary.getEmotion().toString())
                 .build();
@@ -58,7 +58,7 @@ public class DiaryServiceImpl implements DiaryService {
         Diary newDiary = savePersonal(member, diaryRequest);
         return DiaryResponse.builder()
                 .diaryId(newDiary.getId())
-                .member(member.getName())
+                .memberName(member.getName())
                 .content(newDiary.getContent())
                 .date(newDiary.getDate())
                 .build();
@@ -76,7 +76,7 @@ public class DiaryServiceImpl implements DiaryService {
 
     private void checkAvailableDate(LocalDate date, LocalDate currentDate) {
         if (date.isBefore(currentDate) || date.plusDays(1).isAfter(currentDate)) {
-            throw new DiaryWrongDateException();
+            throw new WrongDateException();
         }
     }
 
@@ -88,7 +88,7 @@ public class DiaryServiceImpl implements DiaryService {
         diary.updatePersonal(diaryUpdateRequest);
         return DiaryResponse.builder()
                 .diaryId(diary.getId())
-                .member(member.getName())
+                .memberName(member.getName())
                 .content(diary.getContent())
                 .date(diary.getDate())
                 .build();

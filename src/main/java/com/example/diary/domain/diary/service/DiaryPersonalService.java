@@ -6,7 +6,7 @@ import com.example.diary.domain.diary.dto.DiaryUpdateRequest;
 import com.example.diary.domain.member.entity.Member;
 import java.time.LocalDateTime;
 
-public interface DiaryService {
+public interface DiaryPersonalService {
 
     LocalDateTime LongToLocalDateTime(Long time);
 
