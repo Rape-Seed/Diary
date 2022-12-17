@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 
+@Builder
 @Getter
 @Entity
 public class TeamMember extends BaseEntity {
@@ -35,11 +36,27 @@ public class TeamMember extends BaseEntity {
     public TeamMember() {
     }
 
-    @Builder
-    public TeamMember(Team team, Member member, AcceptStatus acceptStatus) {
+    public TeamMember(Long id, Team team, Member member, AcceptStatus acceptStatus) {
+        this.id = id;
         this.team = team;
         this.member = member;
         this.acceptStatus = acceptStatus;
+    }
+
+    public void setMember(Member member) {
+        if (this.member != null) {
+            this.member.getTeamMembers().remove(this);
+        }
+        this.member = member;
+        member.getTeamMembers().add(this);
+    }
+
+    public void setTeam(Team team) {
+        if (this.team != null) {
+            this.team.getTeamMembers().remove(this);
+        }
+        this.team = team;
+        team.getTeamMembers().add(this);
     }
 
     public void updateAcceptStatus(AcceptStatus acceptStatus) {
