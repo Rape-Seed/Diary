@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 
+@Builder
 @Getter
 @Entity
 public class Team extends BaseEntity {
@@ -37,10 +38,12 @@ public class Team extends BaseEntity {
     public Team() {
     }
 
-    @Builder
-    public Team(String name, String code, LocalDate startDate, LocalDate endDate) {
+    public Team(Long id, String name, String code, List<TeamMember> teamMembers, LocalDate startDate,
+                LocalDate endDate) {
+        this.id = id;
         this.name = name;
         this.code = code;
+        this.teamMembers = teamMembers;
         this.startDate = startDate;
         this.endDate = endDate;
     }
