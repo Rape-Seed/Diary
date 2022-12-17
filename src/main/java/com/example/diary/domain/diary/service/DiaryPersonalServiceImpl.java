@@ -85,7 +85,7 @@ public class DiaryPersonalServiceImpl implements DiaryPersonalService {
     public DiaryResponse updatePersonal(Long diaryId, DiaryUpdateRequest diaryUpdateRequest, Member member) {
         Diary diary = findDiaryById(diaryId);
         checkAuthorization(member, diary);
-        diary.updatePersonal(diaryUpdateRequest);
+        diary.updateDiary(diaryUpdateRequest);
         return DiaryResponse.builder()
                 .diaryId(diary.getId())
                 .memberName(member.getName())

@@ -51,7 +51,7 @@ public class Diary extends BaseEntity {
         this.date = date;
     }
 
-    public void updatePersonal(DiaryUpdateRequest diaryUpdateRequest) {
+    public void updateDiary(DiaryUpdateRequest diaryUpdateRequest) {
         this.content = diaryUpdateRequest.getContent();
     }
 }
