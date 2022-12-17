@@ -10,25 +10,25 @@ public class DiaryResponse {
 
     private Long diaryId;
 
-    private String member;
+    private String memberName;
 
     private String content;
 
     private String emotion;
 
-    private String teamId;
+    private String teamName;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate date;
 
     @Builder
-    public DiaryResponse(Long diaryId, String member, String content, String emotion, String teamId,
+    public DiaryResponse(Long diaryId, String memberName, String content, String emotion, String teamName,
                          LocalDate date) {
         this.diaryId = diaryId;
-        this.member = member;
+        this.memberName = memberName;
         this.content = content;
         this.emotion = emotion;
-        this.teamId = teamId;
+        this.teamName = teamName;
         this.date = date;
     }
 }
