@@ -21,8 +21,7 @@ public class DiaryShareServiceImpl implements DiaryShareService {
 
     private final DiaryRepository diaryRepository;
 
-    private TeamMember findTeamMember(Team team, Member member) {
-        List<TeamMember> teamMembers = team.getTeamMembers();
+    private TeamMember findTeamMember(List<TeamMember> teamMembers, Member member) {
         for (TeamMember teamMember : teamMembers) {
             if (member.equals(teamMember.getMember())) {
                 return teamMember;
@@ -46,8 +45,7 @@ public class DiaryShareServiceImpl implements DiaryShareService {
     @Override
     public DiaryResponse getSharedDiary(Long diaryId, Member member) {
         Diary diary = diaryRepository.findDiaryByDiaryId(diaryId);
-        TeamMember teamMember = findTeamMember(diary.getTeam(), member);
-        checkAcceptStatus(teamMember);
+        checkAcceptStatus(findTeamMember(diary.getTeam().getTeamMembers(), member));
         checkWroteDiary(diary.getTeam(), member, diary.getDate());
         return DiaryResponse.builder()
                 .diaryId(diary.getId())
