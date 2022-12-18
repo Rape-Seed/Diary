@@ -3,11 +3,12 @@ package com.example.diary.global.advice;
 import com.example.diary.global.advice.exception.AlreadyJoinedMemberException;
 import com.example.diary.global.advice.exception.DiaryNotAuthorizedException;
 import com.example.diary.global.advice.exception.DiaryNotFoundException;
-import com.example.diary.global.advice.exception.DiaryWrongDateException;
 import com.example.diary.global.advice.exception.FriendNotAuthorizedException;
 import com.example.diary.global.advice.exception.LoginFailureException;
 import com.example.diary.global.advice.exception.MemberNotFoundException;
+import com.example.diary.global.advice.exception.TeamNotFoundException;
 import com.example.diary.global.advice.exception.TokenValidFailedException;
+import com.example.diary.global.advice.exception.WrongDateException;
 import com.example.diary.global.advice.exceptionDto.ExceptionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -54,17 +55,21 @@ public class ExceptionAdvice {
         return ExceptionResponse.getFailureResult(-202, "해당 일기의 접근 권한이 없습니다.");
     }
 
-    @ExceptionHandler(DiaryWrongDateException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ExceptionResponse diaryWrongDateException() {
-        return ExceptionResponse.getFailureResult(-203, "해당 날짜의 일기를 작성할 수 없습니다.");
-    }
-
-
     @ExceptionHandler(FriendNotAuthorizedException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ExceptionResponse friendNotAuthorizedException() {
         return ExceptionResponse.getFailureResult(-501, "해당 사용자에 대한 접근 권한이 없습니다.");
     }
 
+    @ExceptionHandler(TeamNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ExceptionResponse teamNotFoundException() {
+        return ExceptionResponse.getFailureResult(-601, "해당 팀을 찾을 수 없습니다.");
+    }
+
+    @ExceptionHandler(WrongDateException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ExceptionResponse wrongDateException() {
+        return ExceptionResponse.getFailureResult(-901, "요청하신 날짜가 잘못되었습니다.");
+    }
 }
