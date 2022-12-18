@@ -71,7 +71,7 @@ class DiaryShareServiceImplTest {
         member2 = memberRepository.save(newMember2);
 
         Team newTeam1 = Team.builder()
-//                .name("테스트 팀")
+                .name("테스트 팀")
                 .startDate(LocalDate.of(2022, 1, 1))
                 .endDate(LocalDate.of(2022, 1, 3))
                 .build();
@@ -136,7 +136,7 @@ class DiaryShareServiceImplTest {
                 .memberName(member2.getName())
                 .content(diary2.getContent())
                 .date(diary2.getDate())
-                .emotion(emotion.getContent().toString())
+                .emotion(emotion.getContent().getMessage())
                 .build();
 
         //when
