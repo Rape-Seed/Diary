@@ -1,7 +1,7 @@
 package com.example.diary.domain.diary.service;
 
+import com.example.diary.domain.diary.dto.DiaryDto;
 import com.example.diary.domain.diary.dto.DiaryRequest;
-import com.example.diary.domain.diary.dto.DiaryResponse;
 import com.example.diary.domain.diary.dto.DiaryUpdateRequest;
 import com.example.diary.domain.diary.entity.Diary;
 import com.example.diary.domain.diary.repository.DiaryRepository;
@@ -25,10 +25,10 @@ public class DiaryPersonalServiceImpl implements DiaryPersonalService {
     private final DiaryRepository diaryRepository;
 
     @Override
-    public DiaryResponse getPersonal(Long diaryId, Member member) {
+    public DiaryDto getPersonal(Long diaryId, Member member) {
         Diary diary = findDiaryById(diaryId);
         checkAuthorization(member, diary);
-        return DiaryResponse.builder()
+        return DiaryDto.builder()
                 .diaryId(diary.getId())
                 .memberName(diary.getMember().getName())
                 .content(diary.getContent())
@@ -52,11 +52,11 @@ public class DiaryPersonalServiceImpl implements DiaryPersonalService {
 
     @Transactional
     @Override
-    public DiaryResponse createPersonal(Member member, DiaryRequest diaryRequest) {
+    public DiaryDto createPersonal(Member member, DiaryRequest diaryRequest) {
 
         checkAvailableDate(diaryRequest.getDate(), diaryRequest.getCurrentTime().toLocalDate());
         Diary newDiary = savePersonal(member, diaryRequest);
-        return DiaryResponse.builder()
+        return DiaryDto.builder()
                 .diaryId(newDiary.getId())
                 .memberName(member.getName())
                 .content(newDiary.getContent())
@@ -82,11 +82,11 @@ public class DiaryPersonalServiceImpl implements DiaryPersonalService {
 
     @Transactional
     @Override
-    public DiaryResponse updatePersonal(Long diaryId, DiaryUpdateRequest diaryUpdateRequest, Member member) {
+    public DiaryDto updatePersonal(Long diaryId, DiaryUpdateRequest diaryUpdateRequest, Member member) {
         Diary diary = findDiaryById(diaryId);
         checkAuthorization(member, diary);
         diary.updateDiary(diaryUpdateRequest);
-        return DiaryResponse.builder()
+        return DiaryDto.builder()
                 .diaryId(diary.getId())
                 .memberName(member.getName())
                 .content(diary.getContent())

@@ -1,6 +1,6 @@
 package com.example.diary.domain.diary.service;
 
-import com.example.diary.domain.diary.dto.DiaryResponse;
+import com.example.diary.domain.diary.dto.DiaryDto;
 import com.example.diary.domain.diary.entity.Diary;
 import com.example.diary.domain.diary.repository.DiaryRepository;
 import com.example.diary.domain.member.entity.Member;
@@ -43,16 +43,10 @@ public class DiaryShareServiceImpl implements DiaryShareService {
     }
 
     @Override
-    public DiaryResponse getSharedDiary(Long diaryId, Member member) {
+    public DiaryDto getSharedDiary(Long diaryId, Member member) {
         Diary diary = diaryRepository.findDiaryByDiaryId(diaryId);
         checkAcceptStatus(findTeamMember(diary.getTeam().getTeamMembers(), member));
         checkWroteDiary(diary.getTeam(), member, diary.getDate());
-        return DiaryResponse.builder()
-                .diaryId(diary.getId())
-                .memberName(diary.getMember().getName())
-                .teamName(diary.getTeam().getName())
-                .content(diary.getContent())
-                .date(diary.getDate())
-                .build();
+        return new DiaryDto(diary);
     }
 }

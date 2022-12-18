@@ -3,7 +3,7 @@ package com.example.diary.domain.diary.service;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-import com.example.diary.domain.diary.dto.DiaryResponse;
+import com.example.diary.domain.diary.dto.DiaryDto;
 import com.example.diary.domain.diary.entity.Diary;
 import com.example.diary.domain.diary.repository.DiaryRepository;
 import com.example.diary.domain.emotion.entity.Emotion;
@@ -130,7 +130,7 @@ class DiaryShareServiceImplTest {
     @Test
     void getSharedDiary_success() throws Exception {
         //given
-        DiaryResponse diaryResponse = DiaryResponse.builder()
+        DiaryDto diaryDto = DiaryDto.builder()
                 .diaryId(diary2.getId())
                 .teamName(team1.getName())
                 .memberName(member2.getName())
@@ -140,10 +140,10 @@ class DiaryShareServiceImplTest {
                 .build();
 
         //when
-        DiaryResponse sharedDiaryResponse = diaryShareService.getSharedDiary(diary2.getId(), member1);
+        DiaryDto sharedDiaryDto = diaryShareService.getSharedDiary(diary2.getId(), member1);
 
         //then
-        assertThat(sharedDiaryResponse).isEqualTo(diaryResponse);
+        assertThat(sharedDiaryDto).isEqualTo(diaryDto);
     }
 
     @DisplayName("해당 팀 멤버가 아닌 경우 공유일기 조회 에러")
