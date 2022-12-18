@@ -16,8 +16,8 @@ public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
-    public Diary findDiaryByDiaryId(Long diaryId) {
-        return queryFactory.selectFrom(diary)
+    public Diary findSharedDiaryById(Long diaryId) {
+        return queryFactory.selectFrom(diary).distinct()
                 .join(diary.member, member).fetchJoin()
                 .join(diary.team, team).fetchJoin()
                 .join(team.teamMembers, teamMember).fetchJoin()

@@ -44,7 +44,7 @@ public class DiaryShareServiceImpl implements DiaryShareService {
 
     @Override
     public DiaryDto getSharedDiary(Long diaryId, Member member) {
-        Diary diary = diaryRepository.findDiaryByDiaryId(diaryId);
+        Diary diary = diaryRepository.findSharedDiaryById(diaryId);
         checkAcceptStatus(findTeamMember(diary.getTeam().getTeamMembers(), member));
         checkWroteDiary(diary.getTeam(), member, diary.getDate());
         return new DiaryDto(diary);

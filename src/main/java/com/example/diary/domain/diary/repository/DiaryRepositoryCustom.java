@@ -4,5 +4,5 @@ import com.example.diary.domain.diary.entity.Diary;
 
 public interface DiaryRepositoryCustom {
 
-    Diary findDiaryByDiaryId(Long diaryId);
+    Diary findSharedDiaryById(Long diaryId);
 }
