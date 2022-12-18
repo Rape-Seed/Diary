@@ -47,6 +47,6 @@ public class DiaryShareServiceImpl implements DiaryShareService {
         Diary diary = diaryRepository.findSharedDiaryById(diaryId);
         checkAcceptStatus(findTeamMember(diary.getTeam().getTeamMembers(), member));
         checkWroteDiary(diary.getTeam(), member, diary.getDate());
-        return new DiaryDto(diary);
+        return DiaryDto.ofShared(diary);
     }
 }

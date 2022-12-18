@@ -35,12 +35,24 @@ public class DiaryDto {
         this.date = date;
     }
 
-    public DiaryDto(Diary diary) {
-        this.diaryId = diary.getId();
-        this.memberName = diary.getMember().getName();
-        this.content = diary.getContent();
-        this.teamName = diary.getTeam().getName();
-        this.emotion = diary.getEmotion().getContent().toString();
-        this.date = diary.getDate();
+    public static DiaryDto ofPersonal(Diary diary) {
+        return DiaryDto.builder()
+                .diaryId(diary.getId())
+                .memberName(diary.getMember().getName())
+                .content(diary.getContent())
+                .emotion(diary.getEmotion().getContent().getMessage())
+                .date(diary.getDate())
+                .build();
+    }
+
+    public static DiaryDto ofShared(Diary diary) {
+        return DiaryDto.builder()
+                .diaryId(diary.getId())
+                .memberName(diary.getMember().getName())
+                .teamName(diary.getTeam().getName())
+                .content(diary.getContent())
+                .emotion(diary.getEmotion().getContent().getMessage())
+                .date(diary.getDate())
+                .build();
     }
 }
