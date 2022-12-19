@@ -1,6 +1,5 @@
 package com.example.diary.domain.diary.service;
 
-import com.example.diary.domain.diary.dto.DiaryDto;
 import com.example.diary.domain.diary.dto.DiaryUpdateRequest;
 import com.example.diary.domain.diary.entity.Diary;
 import com.example.diary.domain.diary.repository.DiaryRepository;
@@ -24,10 +23,10 @@ public class DiaryServiceImpl implements DiaryService {
     }
 
     @Transactional
-    public DiaryDto update(Long diaryId, DiaryUpdateRequest diaryUpdateRequest, Member member) {
-        Diary diary = diaryRepository.findPersonalDiaryById(diaryId);
+    @Override
+    public Diary update(Diary diary, DiaryUpdateRequest diaryUpdateRequest, Member member) {
         checkDiaryWriter(diary.getMember(), member);
         diary.updateDiary(diaryUpdateRequest);
-        return DiaryDto.ofPersonal(diary);
+        return diary;
     }
 }

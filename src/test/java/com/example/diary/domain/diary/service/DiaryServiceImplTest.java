@@ -3,7 +3,6 @@ package com.example.diary.domain.diary.service;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-import com.example.diary.domain.diary.dto.DiaryDto;
 import com.example.diary.domain.diary.dto.DiaryUpdateRequest;
 import com.example.diary.domain.diary.entity.Diary;
 import com.example.diary.domain.diary.repository.DiaryRepository;
@@ -14,12 +13,13 @@ import com.example.diary.domain.member.entity.Member;
 import com.example.diary.domain.member.repository.MemberRepository;
 import com.example.diary.global.advice.exception.DiaryNotAuthorizedException;
 import java.time.LocalDate;
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
@@ -33,6 +33,9 @@ class DiaryServiceImplTest {
     EmotionRepository emotionRepository;
     @Autowired
     DiaryServiceImpl diaryService;
+
+    @Autowired
+    EntityManager em;
 
     private Member member1;
     private Member member2;
@@ -77,18 +80,12 @@ class DiaryServiceImplTest {
         //given
         String updateContent = "update test content";
         DiaryUpdateRequest diaryUpdateRequest = new DiaryUpdateRequest(updateContent);
-        DiaryDto diaryDto = DiaryDto.builder()
-                .diaryId(diary1.getId())
-                .content(updateContent)
-                .memberName(member1.getName())
-                .emotion(emotion.getContent().getMessage())
-                .date(diary1.getDate())
-                .build();
+
         //when
-        DiaryDto updateDiaryDto = diaryService.update(diary1.getId(), diaryUpdateRequest, member1);
+        Diary updateDiary = diaryService.update(diary1, diaryUpdateRequest, member1);
 
         //then
-        assertThat(updateDiaryDto).isEqualTo(diaryDto);
+        assertThat(diary1).isEqualTo(updateDiary);
     }
 
     @DisplayName("작성자가 아닌 경우 일기 수정 예외처리")
@@ -99,7 +96,7 @@ class DiaryServiceImplTest {
         DiaryUpdateRequest diaryUpdateRequest = new DiaryUpdateRequest(updateContent);
 
         //then
-        assertThatThrownBy(() -> diaryService.update(diary1.getId(), diaryUpdateRequest, member2))
+        assertThatThrownBy(() -> diaryService.update(diary1, diaryUpdateRequest, member2))
                 .isInstanceOf(DiaryNotAuthorizedException.class);
     }
 }
