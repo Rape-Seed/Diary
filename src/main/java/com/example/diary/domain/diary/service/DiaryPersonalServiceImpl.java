@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class DiaryPersonalServiceImpl implements DiaryPersonalService {
 
     private final DiaryRepository diaryRepository;
+    private final DiaryService diaryService;
+
 
     @Override
     public DiaryDto getPersonal(Long diaryId, Member member) {
@@ -82,23 +84,16 @@ public class DiaryPersonalServiceImpl implements DiaryPersonalService {
 
     @Transactional
     @Override
-    public DiaryDto updatePersonal(Long diaryId, DiaryUpdateRequest diaryUpdateRequest, Member member) {
+    public DiaryDto update(Long diaryId, DiaryUpdateRequest diaryUpdateRequest, Member member) {
         Diary diary = findDiaryById(diaryId);
-        checkAuthorization(member, diary);
-        diary.updateDiary(diaryUpdateRequest);
-        return DiaryDto.builder()
-                .diaryId(diary.getId())
-                .memberName(member.getName())
-                .content(diary.getContent())
-                .date(diary.getDate())
-                .build();
+        Diary updatedDiary = diaryService.update(diary, diaryUpdateRequest, member);
+        return DiaryDto.ofPersonal(updatedDiary);
     }
 
     @Transactional
     @Override
-    public void deletePersonal(Long diaryId, Member member) {
+    public Long delete(Long diaryId, Member member) {
         Diary diary = findDiaryById(diaryId);
-        checkAuthorization(member, diary);
-        diaryRepository.delete(diary);
+        return diaryService.delete(diary, member);
     }
 }

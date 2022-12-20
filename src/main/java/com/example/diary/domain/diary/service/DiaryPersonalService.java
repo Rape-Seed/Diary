@@ -14,7 +14,7 @@ public interface DiaryPersonalService {
 
     DiaryDto getPersonal(Long diaryId, Member member);
 
-    DiaryDto updatePersonal(Long diaryId, DiaryUpdateRequest diaryUpdateRequest, Member member);
+    DiaryDto update(Long diaryId, DiaryUpdateRequest diaryUpdateRequest, Member member);
 
-    void deletePersonal(Long diaryId, Member member);
+    Long delete(Long diaryId, Member member);
 }
