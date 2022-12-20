@@ -239,9 +239,10 @@ class DiaryShareServiceImplTest {
 
         //then
         assertThat(diaryDto).isEqualTo(updateDiaryDto);
+        assertThat(updateContent).isEqualTo(diaryRepository.findById(diary1.getId()).get().getContent());
     }
 
-    @DisplayName("공유일기를 정상적으로 조회합니다.")
+    @DisplayName("작성자가 아닌 경우 일기 수정시 오류가 발생한다.")
     @Test
     void updateDiary_NotWriter() throws Exception {
         //given
@@ -251,5 +252,32 @@ class DiaryShareServiceImplTest {
         //then
         assertThatThrownBy(() -> diaryShareService.update(diary1.getId(), diaryUpdateRequest, member2))
                 .isInstanceOf(DiaryNotAuthorizedException.class);
+        assertThat(diary1.getContent()).isEqualTo(diaryRepository.findById(diary1.getId()).get().getContent());
+    }
+
+    @DisplayName("공유일기를 정상적으로 삭제합니다.")
+    @Test
+    void deleteDiary_success() throws Exception {
+        //given
+        Long diaryId = diary1.getId();
+
+        //when
+        Long deleteDiaryId = diaryShareService.delete(diaryId, member1);
+
+        //then
+        assertThat(diaryId).isEqualTo(deleteDiaryId);
+        assertThat(false).isEqualTo(diaryRepository.findById(diaryId).isPresent());
+    }
+
+    @DisplayName("작성자가 아닌 경우 공유일기 삭제시 오류가 발생한다.")
+    @Test
+    void deleteDiary_NotWriter() throws Exception {
+        //given
+        Long diaryId = diary1.getId();
+
+        //then
+        assertThatThrownBy(() -> diaryShareService.delete(diary1.getId(), member2))
+                .isInstanceOf(DiaryNotAuthorizedException.class);
+        assertThat(true).isEqualTo(diaryRepository.findById(diaryId).isPresent());
     }
 }
