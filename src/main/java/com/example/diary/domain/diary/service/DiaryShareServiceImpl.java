@@ -69,4 +69,11 @@ public class DiaryShareServiceImpl implements DiaryShareService {
         diaryService.update(diary, diaryUpdateRequest, member);
         return DiaryDto.ofShared(diary);
     }
+
+    @Transactional
+    @Override
+    public Long delete(Long diaryId, Member member) {
+        Diary diary = findById(diaryId);
+        return diaryService.delete(diary, member);
+    }
 }
