@@ -7,4 +7,6 @@ import com.example.diary.domain.member.entity.Member;
 public interface DiaryService {
 
     Diary update(Diary diary, DiaryUpdateRequest diaryUpdateRequest, Member member);
+
+    Long delete(Diary diary, Member member);
 }

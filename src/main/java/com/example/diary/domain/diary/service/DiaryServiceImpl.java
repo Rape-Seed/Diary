@@ -29,4 +29,12 @@ public class DiaryServiceImpl implements DiaryService {
         diary.updateDiary(diaryUpdateRequest);
         return diary;
     }
+
+    @Transactional
+    @Override
+    public Long delete(Diary diary, Member member) {
+        checkDiaryWriter(diary.getMember(), member);
+        diaryRepository.deleteById(diary.getId());
+        return diary.getId();
+    }
 }
