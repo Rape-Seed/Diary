@@ -1,15 +1,20 @@
 package com.example.diary.domain.diary.controller;
 
-import com.example.diary.domain.diary.dto.DiaryRequest;
-import com.example.diary.domain.diary.dto.DiaryResponse;
-import com.example.diary.domain.diary.service.DiaryService;
+import com.example.diary.domain.diary.dto.DiaryDto;
+import com.example.diary.domain.diary.dto.DiaryUpdateRequest;
+import com.example.diary.domain.diary.service.DiaryPersonalService;
+import com.example.diary.domain.diary.service.DiaryShareService;
+import com.example.diary.domain.member.entity.CurrentMember;
 import com.example.diary.domain.member.entity.Member;
+import com.example.diary.global.common.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,15 +23,36 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DiaryController {
 
-    private DiaryService diaryService;
+    private final DiaryShareService diaryShareService;
+    private final DiaryPersonalService diaryPersonalService;
 
-    @PostMapping("/v1/diary")
-    public ResponseEntity<DiaryResponse> createPersonal(
-            @RequestAttribute Long currentTime,
-            @RequestBody DiaryRequest diaryRequest,
-            Member member) {
-        diaryRequest.setCurrentTime(diaryService.LongToLocalDateTime(currentTime));
-        DiaryResponse diaryResponse = diaryService.createPersonal(member, diaryRequest);
-        return new ResponseEntity<>(diaryResponse, HttpStatus.CREATED);
+    @PutMapping("/v1/diary/mt/{diaryId}")
+    public ResponseDto<DiaryDto> updatePersonalDiary(@PathVariable("diaryId") Long diaryId,
+                                                     @RequestBody DiaryUpdateRequest diaryUpdateRequest,
+                                                     @CurrentMember Member member) {
+        DiaryDto diaryDto = diaryPersonalService.update(diaryId, diaryUpdateRequest, member);
+        return new ResponseDto<>(diaryDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/v1/diary/share/{diaryId}")
+    public ResponseDto<DiaryDto> getSharedDiary(@PathVariable("diaryId") Long diaryId,
+                                                @CurrentMember Member member) {
+        DiaryDto diaryDto = diaryShareService.getSharedDiary(diaryId, member);
+        return new ResponseDto<>(diaryDto, HttpStatus.OK);
+    }
+
+    @PutMapping("/v1/diary/share/{diaryId}")
+    public ResponseDto<DiaryDto> updateSharedDiary(@PathVariable("diaryId") Long diaryId,
+                                                   @RequestBody DiaryUpdateRequest diaryUpdateRequest,
+                                                   @CurrentMember Member member) {
+        DiaryDto diaryDto = diaryShareService.update(diaryId, diaryUpdateRequest, member);
+        return new ResponseDto<>(diaryDto, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/v1/diary/share")
+    public ResponseDto<Long> deleteSharedDiary(@RequestHeader("Diary-Id") Long diaryId,
+                                               @CurrentMember Member member) {
+        Long deletedDiaryId = diaryShareService.delete(diaryId, member);
+        return new ResponseDto<>(deletedDiaryId, HttpStatus.OK);
     }
 }

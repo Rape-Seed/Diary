@@ -1,20 +1,12 @@
 package com.example.diary.domain.diary.service;
 
-import com.example.diary.domain.diary.dto.DiaryRequest;
-import com.example.diary.domain.diary.dto.DiaryResponse;
 import com.example.diary.domain.diary.dto.DiaryUpdateRequest;
+import com.example.diary.domain.diary.entity.Diary;
 import com.example.diary.domain.member.entity.Member;
-import java.time.LocalDateTime;
 
 public interface DiaryService {
 
-    LocalDateTime LongToLocalDateTime(Long time);
+    Diary update(Diary diary, DiaryUpdateRequest diaryUpdateRequest, Member member);
 
-    DiaryResponse createPersonal(Member member, DiaryRequest diaryRequest);
-
-    DiaryResponse getPersonal(Long diaryId, Member member);
-
-    DiaryResponse updatePersonal(Long diaryId, DiaryUpdateRequest diaryUpdateRequest, Member member);
-
-    void deletePersonal(Long diaryId, Member member);
+    Long delete(Diary diary, Member member);
 }

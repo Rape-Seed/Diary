@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 
+@Builder
 @Getter
 @Entity
 public class Diary extends BaseEntity {
@@ -41,16 +42,8 @@ public class Diary extends BaseEntity {
     public Diary() {
     }
 
-    @Builder
-    public Diary(Member member, String content, Team team, LocalDate date) {
-        this.member = member;
-        this.content = content;
-        this.team = team;
-        this.date = date;
-    }
-
-    @Builder
-    public Diary(Member member, String content, Emotion emotion, Team team, LocalDate date) {
+    public Diary(Long id, Member member, String content, Emotion emotion, Team team, LocalDate date) {
+        this.id = id;
         this.member = member;
         this.content = content;
         this.emotion = emotion;
@@ -58,7 +51,7 @@ public class Diary extends BaseEntity {
         this.date = date;
     }
 
-    public void updatePersonal(DiaryUpdateRequest diaryUpdateRequest) {
+    public void updateDiary(DiaryUpdateRequest diaryUpdateRequest) {
         this.content = diaryUpdateRequest.getContent();
     }
 }

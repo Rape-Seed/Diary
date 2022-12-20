@@ -4,6 +4,7 @@ import com.example.diary.global.common.BaseEntity;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,6 +14,7 @@ import javax.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 
+@Builder
 @Getter
 @Entity
 public class Team extends BaseEntity {
@@ -27,7 +29,7 @@ public class Team extends BaseEntity {
     private String code;
 
     @Builder.Default
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
     private List<TeamMember> teamMembers = new ArrayList<>();
 
     private LocalDate startDate;
@@ -37,10 +39,12 @@ public class Team extends BaseEntity {
     public Team() {
     }
 
-    @Builder
-    public Team(String name, String code, LocalDate startDate, LocalDate endDate) {
+    public Team(Long id, String name, String code, List<TeamMember> teamMembers, LocalDate startDate,
+                LocalDate endDate) {
+        this.id = id;
         this.name = name;
         this.code = code;
+        this.teamMembers = teamMembers;
         this.startDate = startDate;
         this.endDate = endDate;
     }
