@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class DiaryShareServiceImpl implements DiaryShareService {
 
     private final DiaryRepository diaryRepository;
-
     private final DiaryService diaryService;
 
     private Diary findById(Long diaryId) {
@@ -66,8 +65,8 @@ public class DiaryShareServiceImpl implements DiaryShareService {
     @Override
     public DiaryDto update(Long diaryId, DiaryUpdateRequest diaryUpdateRequest, Member member) {
         Diary diary = findById(diaryId);
-        diaryService.update(diary, diaryUpdateRequest, member);
-        return DiaryDto.ofShared(diary);
+        Diary updatedDiary = diaryService.update(diary, diaryUpdateRequest, member);
+        return DiaryDto.ofShared(updatedDiary);
     }
 
     @Transactional
