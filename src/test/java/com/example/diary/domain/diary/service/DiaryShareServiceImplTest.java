@@ -4,6 +4,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import com.example.diary.domain.diary.dto.DiaryDto;
+import com.example.diary.domain.diary.dto.DiaryUpdateRequest;
 import com.example.diary.domain.diary.entity.Diary;
 import com.example.diary.domain.diary.repository.DiaryRepository;
 import com.example.diary.domain.emotion.entity.Emotion;
@@ -215,6 +216,40 @@ class DiaryShareServiceImplTest {
 
         //then
         assertThatThrownBy(() -> diaryShareService.getSharedDiary(diary2.getId(), member1))
+                .isInstanceOf(DiaryNotAuthorizedException.class);
+    }
+
+    @DisplayName("공유일기를 정상적으로 조회합니다.")
+    @Test
+    void updateSharedDiary_success() throws Exception {
+        //given
+        String updateContent = "update test content";
+        DiaryUpdateRequest diaryUpdateRequest = new DiaryUpdateRequest(updateContent);
+        DiaryDto diaryDto = DiaryDto.builder()
+                .diaryId(diary1.getId())
+                .content(updateContent)
+                .teamName(team1.getName())
+                .memberName(member1.getName())
+                .emotion(emotion.getContent().getMessage())
+                .date(diary1.getDate())
+                .build();
+
+        //when
+        DiaryDto updateDiaryDto = diaryShareService.update(diary1.getId(), diaryUpdateRequest, member1);
+
+        //then
+        assertThat(diaryDto).isEqualTo(updateDiaryDto);
+    }
+
+    @DisplayName("공유일기를 정상적으로 조회합니다.")
+    @Test
+    void updateDiary_NotWriter() throws Exception {
+        //given
+        String updateContent = "update test content";
+        DiaryUpdateRequest diaryUpdateRequest = new DiaryUpdateRequest(updateContent);
+
+        //then
+        assertThatThrownBy(() -> diaryShareService.update(diary1.getId(), diaryUpdateRequest, member2))
                 .isInstanceOf(DiaryNotAuthorizedException.class);
     }
 }
