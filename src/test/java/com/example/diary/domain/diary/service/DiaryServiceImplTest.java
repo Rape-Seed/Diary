@@ -74,7 +74,7 @@ class DiaryServiceImplTest {
         diary1 = diaryRepository.save(newDiary1);
     }
 
-    @DisplayName("정상적인 일기 수정")
+    @DisplayName("정상적으로 일기를 수정한다.")
     @Test
     void updateDiary_success() throws Exception {
         //given
@@ -88,7 +88,7 @@ class DiaryServiceImplTest {
         assertThat(diary1).isEqualTo(updateDiary);
     }
 
-    @DisplayName("작성자가 아닌 경우 일기 수정 예외처리")
+    @DisplayName("작성자가 아닌 경우 일기 수정시 오류가 발생한다.")
     @Test
     void updateDiary_NotWriter() throws Exception {
         //given
@@ -98,5 +98,31 @@ class DiaryServiceImplTest {
         //then
         assertThatThrownBy(() -> diaryService.update(diary1, diaryUpdateRequest, member2))
                 .isInstanceOf(DiaryNotAuthorizedException.class);
+    }
+
+    @DisplayName("일기를 정상적으로 삭제다.")
+    @Test
+    void deleteDiary_success() throws Exception {
+        //given
+        Long diaryId = diary1.getId();
+
+        //when
+        Long deleteDiaryId = diaryService.delete(diary1, member1);
+
+        //then
+        assertThat(diaryId).isEqualTo(deleteDiaryId);
+        assertThat(false).isEqualTo(diaryRepository.findById(diaryId).isPresent());
+    }
+
+    @DisplayName("작성자가 아닌 경우 일기 삭제시 오류가 발생한다.")
+    @Test
+    void deleteDiary_NotWriter() throws Exception {
+        //given
+        Long diaryId = diary1.getId();
+
+        //then
+        assertThatThrownBy(() -> diaryService.delete(diary1, member2))
+                .isInstanceOf(DiaryNotAuthorizedException.class);
+        assertThat(true).isEqualTo(diaryRepository.findById(diaryId).isPresent());
     }
 }
