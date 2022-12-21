@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/relations")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class RelationApiController {
     private final RelationService relationService;
@@ -29,8 +28,8 @@ public class RelationApiController {
     /**
      * 친구 목록 조회 - ACCEPT
      */
-    @GetMapping("/v1/{status}")
-    public void getRelationsByStatus(@CurrentMember Member member, @PathVariable String status,
+    @GetMapping("/v1/relations")
+    public void getRelationsByStatus(@CurrentMember Member member,
                                      @ModelAttribute RelationSearchCondition condition,
                                      @PageableDefault(sort = {"name", "email"}) Pageable pageable) {
 
