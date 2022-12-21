@@ -6,12 +6,17 @@ import static com.example.diary.domain.relation.entity.RelationType.WAITING;
 import com.example.diary.domain.member.entity.Member;
 import com.example.diary.domain.member.repository.MemberRepository;
 import com.example.diary.domain.relation.dto.RelationApplyResponseDto;
+import com.example.diary.domain.relation.dto.RelationPagingDto;
 import com.example.diary.domain.relation.dto.RelationRequestDto;
+import com.example.diary.domain.relation.dto.RelationSearchCondition;
 import com.example.diary.domain.relation.entity.Relation;
 import com.example.diary.domain.relation.repository.CustomRelationRepository;
+import com.example.diary.domain.relation.repository.RelationMemberDto;
 import com.example.diary.domain.relation.repository.RelationRepository;
 import com.example.diary.global.advice.exception.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,5 +41,17 @@ public class RelationServiceImpl implements RelationService {
         relationRepository.save(new Relation(friend, member, WAITING));
 
         return new RelationApplyResponseDto(relationApply);
+    }
+
+    @Override
+    public RelationPagingDto getRelationsByStatus(Member member,
+                                                  RelationSearchCondition condition,
+                                                  Pageable pageable) {
+        Page<RelationMemberDto> result = customRelationRepository.
+                findRelationFromType(
+                        member.getId(), condition, pageable
+                );
+
+        return new RelationPagingDto(result);
     }
 }
