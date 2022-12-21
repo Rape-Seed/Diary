@@ -62,4 +62,12 @@ public class Relation extends BaseEntity {
         this.friend = friend;
         friend.getRelations().add(this);
     }
+
+    @Override
+    public String toString() {
+        return "Relation{" +
+                "id=" + id +
+                ", relationType=" + relationType +
+                '}';
+    }
 }

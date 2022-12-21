@@ -95,4 +95,18 @@ public class Member extends BaseEntity {
 
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", profileImage='" + profileImage + '\'' +
+                ", email='" + email + '\'' +
+                ", code='" + code + '\'' +
+                ", birthday=" + birthday +
+                ", platform=" + platform +
+                ", role=" + role +
+                '}';
+    }
 }
