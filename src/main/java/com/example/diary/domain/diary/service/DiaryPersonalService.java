@@ -12,9 +12,9 @@ public interface DiaryPersonalService {
 
     DiaryDto createPersonal(Member member, DiaryRequest diaryRequest);
 
-    DiaryDto getPersonal(Long diaryId, Member member);
-
     DiaryDto update(Long diaryId, DiaryUpdateRequest diaryUpdateRequest, Member member);
 
     Long delete(Long diaryId, Member member);
+
+    DiaryDto get(Long diaryId, Member member);
 }

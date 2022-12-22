@@ -25,27 +25,8 @@ public class DiaryPersonalServiceImpl implements DiaryPersonalService {
     private final DiaryRepository diaryRepository;
     private final DiaryService diaryService;
 
-
-    @Override
-    public DiaryDto getPersonal(Long diaryId, Member member) {
-        Diary diary = findDiaryById(diaryId);
-        checkAuthorization(member, diary);
-        return DiaryDto.builder()
-                .diaryId(diary.getId())
-                .memberName(diary.getMember().getName())
-                .content(diary.getContent())
-                .emotion(diary.getEmotion().toString())
-                .build();
-    }
-
     private Diary findDiaryById(Long diaryId) {
         return diaryRepository.findById(diaryId).orElseThrow(DiaryNotFoundException::new);
-    }
-
-    private void checkAuthorization(Member member, Diary diary) {
-        if (!member.equals(diary.getMember())) {
-            throw new DiaryNotAuthorizedException();
-        }
     }
 
     public LocalDateTime LongToLocalDateTime(Long time) {
@@ -95,5 +76,18 @@ public class DiaryPersonalServiceImpl implements DiaryPersonalService {
     public Long delete(Long diaryId, Member member) {
         Diary diary = findDiaryById(diaryId);
         return diaryService.delete(diary, member);
+    }
+
+    @Override
+    public DiaryDto get(Long diaryId, Member member) {
+        Diary diary = findDiaryById(diaryId);
+        checkDiaryWriter(diary.getMember(), member);
+        return DiaryDto.ofPersonal(diary);
+    }
+
+    private static void checkDiaryWriter(Member diaryWriter, Member member) {
+        if (!diaryWriter.equals(member)) {
+            throw new DiaryNotAuthorizedException("[ERROR] 일기 작성자만 수정이 가능합니다.");
+        }
     }
 }
