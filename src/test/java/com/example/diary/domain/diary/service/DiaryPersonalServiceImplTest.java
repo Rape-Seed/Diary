@@ -71,7 +71,7 @@ class DiaryPersonalServiceImplTest {
         diary1 = diaryRepository.save(newDiary1);
     }
 
-    @DisplayName("개인일기를 정상적으로 조회합니다.")
+    @DisplayName("개인일기를 정상적으로 수정합니다.")
     @Test
     void updateSharedDiary_success() throws Exception {
         //given
@@ -93,7 +93,7 @@ class DiaryPersonalServiceImplTest {
         assertThat(updateContent).isEqualTo(diaryRepository.findById(diary1.getId()).get().getContent());
     }
 
-    @DisplayName("작성자가 아닌 경우 일기 수정시 오류가 발생한다.")
+    @DisplayName("작성자가 아닌 경우 개인일기 수정시 오류가 발생한다.")
     @Test
     void updateDiary_NotWriter() throws Exception {
         //given
@@ -106,7 +106,7 @@ class DiaryPersonalServiceImplTest {
         assertThat(diary1.getContent()).isEqualTo(diaryRepository.findById(diary1.getId()).get().getContent());
     }
 
-    @DisplayName("공유일기를 정상적으로 삭제합니다.")
+    @DisplayName("개인일기를 정상적으로 삭제합니다.")
     @Test
     void deleteDiary_success() throws Exception {
         //given
@@ -120,7 +120,7 @@ class DiaryPersonalServiceImplTest {
         assertThat(false).isEqualTo(diaryRepository.findById(diaryId).isPresent());
     }
 
-    @DisplayName("작성자가 아닌 경우 공유일기 삭제시 오류가 발생한다.")
+    @DisplayName("작성자가 아닌 경우 개인일기 삭제시 오류가 발생한다.")
     @Test
     void deleteDiary_NotWriter() throws Exception {
         //given
@@ -130,5 +130,31 @@ class DiaryPersonalServiceImplTest {
         assertThatThrownBy(() -> diaryPersonalService.delete(diary1.getId(), member2))
                 .isInstanceOf(DiaryNotAuthorizedException.class);
         assertThat(true).isEqualTo(diaryRepository.findById(diaryId).isPresent());
+    }
+
+    @DisplayName("개인일기를 정상적으로 조회합니다.")
+    @Test
+    void getDiary_success() throws Exception {
+        //given
+        DiaryDto diaryDto = DiaryDto.builder()
+                .diaryId(diary1.getId())
+                .content(diary1.getContent())
+                .memberName(member1.getName())
+                .emotion(emotion.getContent().getMessage())
+                .date(diary1.getDate())
+                .build();
+
+        //when
+        DiaryDto getDiaryDto = diaryPersonalService.get(diary1.getId(), member1);
+
+        //then
+        assertThat(diaryDto).isEqualTo(getDiaryDto);
+    }
+
+    @DisplayName("작성자가 아닌 경우 개인일기 조회시 오류가 발생한다.")
+    @Test
+    void getDiary_NotWriter() throws Exception {
+        assertThatThrownBy(() -> diaryPersonalService.get(diary1.getId(), member2))
+                .isInstanceOf(DiaryNotAuthorizedException.class);
     }
 }
