@@ -1,12 +1,12 @@
 package com.example.diary.domain.relation.dto;
 
-public class RelationAcceptRequestDto {
+public class RelationDecideRequestDto {
     private Long friendId;
 
-    public RelationAcceptRequestDto() {
+    public RelationDecideRequestDto() {
     }
 
-    public RelationAcceptRequestDto(Long friendId) {
+    public RelationDecideRequestDto(Long friendId) {
         this.friendId = friendId;
     }
 
