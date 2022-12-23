@@ -7,7 +7,7 @@ import com.example.diary.domain.member.entity.Member;
 import com.example.diary.domain.member.entity.PlatformType;
 import com.example.diary.domain.member.entity.Role;
 import com.example.diary.domain.member.repository.MemberRepository;
-import com.example.diary.domain.relation.dto.RelationAcceptRequestDto;
+import com.example.diary.domain.relation.dto.RelationDecideRequestDto;
 import com.example.diary.domain.relation.dto.RelationPagingDto;
 import com.example.diary.domain.relation.dto.RelationRequestDto;
 import com.example.diary.domain.relation.dto.RelationResponseDto;
@@ -127,8 +127,8 @@ class RelationServiceImplTest {
         Member member1 = memberRepository.findByEmail("qwer2@gmail.com");
         Member member2 = memberRepository.findByEmail("qwer3@gmail.com");
 
-        RelationAcceptRequestDto dto1 = new RelationAcceptRequestDto(member1.getId());
-        RelationAcceptRequestDto dto2 = new RelationAcceptRequestDto(member2.getId());
+        RelationDecideRequestDto dto1 = new RelationDecideRequestDto(member1.getId());
+        RelationDecideRequestDto dto2 = new RelationDecideRequestDto(member2.getId());
 
         relationService.acceptRelation(member, dto1);
         relationService.acceptRelation(member, dto2);
@@ -152,7 +152,7 @@ class RelationServiceImplTest {
         Member member1 = memberRepository.findByEmail("test@gmail.com");
 
         assertThatThrownBy(
-                () -> relationService.acceptRelation(member, new RelationAcceptRequestDto(member1.getId())))
+                () -> relationService.acceptRelation(member, new RelationDecideRequestDto(member1.getId())))
                 .isInstanceOf(RelationNotFoundException.class);
     }
 
@@ -161,10 +161,10 @@ class RelationServiceImplTest {
         Member member = memberRepository.findByEmail("gil@gmail.com");
         Member member1 = memberRepository.findByEmail("qwer2@gmail.com");
 
-        relationService.acceptRelation(member, new RelationAcceptRequestDto(member1.getId()));
+        relationService.acceptRelation(member, new RelationDecideRequestDto(member1.getId()));
 
         assertThatThrownBy(
-                () -> relationService.acceptRelation(member, new RelationAcceptRequestDto(member1.getId())))
+                () -> relationService.acceptRelation(member, new RelationDecideRequestDto(member1.getId())))
                 .isInstanceOf(RelationAlreadyFormedException.class);
     }
 
@@ -178,8 +178,39 @@ class RelationServiceImplTest {
         friend.acceptRelation();
 
         assertThatThrownBy(
-                () -> relationService.acceptRelation(member, new RelationAcceptRequestDto(member1.getId())))
+                () -> relationService.acceptRelation(member, new RelationDecideRequestDto(member1.getId())))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void deleteRelation() {
+        Member member = memberRepository.findByEmail("gil@gmail.com");
+        Member member1 = memberRepository.findByEmail("qwer2@gmail.com");
+
+        assertThat(member1.getRelations().size()).isEqualTo(1);
+        assertThat(member.getRelations().size()).isEqualTo(50);
+
+        relationService.rejectRelation(member, member1.getId());
+
+        assertThat(member1.getRelations().size()).isEqualTo(0);
+        assertThat(member.getRelations().size()).isEqualTo(49);
+    }
+
+    @Test
+    void rejectRelation() {
+        Member member = memberRepository.findByEmail("gil@gmail.com");
+        Member member1 = memberRepository.findByEmail("qwer2@gmail.com");
+
+        relationService.acceptRelation(member, new RelationDecideRequestDto(member1.getId()));
+
+        assertThat(member1.getRelations().size()).isEqualTo(1);
+        assertThat(member.getRelations().size()).isEqualTo(50);
+
+        relationService.rejectRelation(member, member1.getId());
+
+        assertThat(member1.getRelations().size()).isEqualTo(0);
+        assertThat(member.getRelations().size()).isEqualTo(49);
+
     }
 
 }
