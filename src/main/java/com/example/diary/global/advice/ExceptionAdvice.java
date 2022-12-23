@@ -7,6 +7,7 @@ import com.example.diary.global.advice.exception.FriendNotAuthorizedException;
 import com.example.diary.global.advice.exception.LoginFailureException;
 import com.example.diary.global.advice.exception.MemberNotFoundException;
 import com.example.diary.global.advice.exception.RelationAlreadyExistException;
+import com.example.diary.global.advice.exception.RelationAlreadyFormedException;
 import com.example.diary.global.advice.exception.RelationNotFoundException;
 import com.example.diary.global.advice.exception.TeamNotFoundException;
 import com.example.diary.global.advice.exception.TokenValidFailedException;
@@ -73,6 +74,12 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ExceptionResponse relationAlreadyExistException() {
         return ExceptionResponse.getFailureResult(-502, "친구를 찾을 수 없습니다.");
+    }
+
+    @ExceptionHandler(RelationAlreadyFormedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ExceptionResponse relationAlreadyFormedException() {
+        return ExceptionResponse.getFailureResult(-503, "이미 친구인 사용자 입니다.");
     }
 
     @ExceptionHandler(TeamNotFoundException.class)
