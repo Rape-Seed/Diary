@@ -2,7 +2,10 @@ package com.example.diary.domain.relation.controller;
 
 import com.example.diary.domain.member.entity.CurrentMember;
 import com.example.diary.domain.member.entity.Member;
+import com.example.diary.domain.relation.dto.RelationDecideRequestDto;
+import com.example.diary.domain.relation.dto.RelationPagingDto;
 import com.example.diary.domain.relation.dto.RelationRequestDto;
+import com.example.diary.domain.relation.dto.RelationResponseDto;
 import com.example.diary.domain.relation.dto.RelationSearchCondition;
 import com.example.diary.domain.relation.service.RelationService;
 import com.example.diary.global.common.dto.ResponseDto;
@@ -29,10 +32,13 @@ public class RelationApiController {
      * 친구 목록 조회 - ACCEPT
      */
     @GetMapping("/v1/relations")
-    public void getRelationsByStatus(@CurrentMember Member member,
-                                     @ModelAttribute RelationSearchCondition condition,
-                                     @PageableDefault(sort = {"name", "email"}) Pageable pageable) {
-
+    public ResponseDto<RelationPagingDto> getRelationsByStatus(@CurrentMember Member member,
+                                                               @ModelAttribute RelationSearchCondition condition,
+                                                               @PageableDefault(sort = {"name",
+                                                                       "email"}) Pageable pageable) {
+        return new ResponseDto<>(
+                relationService.getRelationsByStatus(member, condition, pageable),
+                HttpStatus.OK);
     }
 
     /**
@@ -48,18 +54,23 @@ public class RelationApiController {
     }
 
     /**
-     * 친구수락
+     * 친구 삭제
      */
     @PostMapping("/v1/accept")
-    public void acceptRelation(@CurrentMember Member member, @RequestBody RelationRequestDto relationRequestDto) {
-
+    public ResponseDto<RelationResponseDto> acceptRelation(@CurrentMember Member member,
+                                                           @RequestBody RelationDecideRequestDto relationAcceptRequestDto) {
+        return new ResponseDto<>(
+                relationService.acceptRelation(member, relationAcceptRequestDto),
+                "친구가 추가 되었습니다.",
+                HttpStatus.OK);
     }
 
     /**
-     * 친구삭제
+     * 친구삭제, 거절
      */
     @DeleteMapping()
-    public void deleteRelation(@CurrentMember Member member, @RequestHeader("Code") String relationCode) {
-
+    public ResponseDto<?> deleteRelation(@CurrentMember Member member, @RequestHeader("Friend-Id") String friendId) {
+        relationService.rejectRelation(member, Long.valueOf(friendId));
+        return new ResponseDto<>("친구 거절 되었습니다.", HttpStatus.OK);
     }
 }
