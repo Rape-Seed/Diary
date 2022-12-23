@@ -38,7 +38,7 @@ public class Relation extends BaseEntity {
 
     public Relation(Member member, Member friend, RelationType relationType) {
         setMember(member);
-        setFriend(friend);
+        this.friend = friend;
         this.relationType = relationType;
     }
 
@@ -67,6 +67,8 @@ public class Relation extends BaseEntity {
     public String toString() {
         return "Relation{" +
                 "id=" + id +
+                ", member=" + member.getEmail() +
+                ", friend=" + friend.getEmail() +
                 ", relationType=" + relationType +
                 '}';
     }
