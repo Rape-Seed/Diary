@@ -17,5 +17,5 @@ public interface RelationService {
                                            RelationSearchCondition condition,
                                            Pageable pageable);
 
-    ResponseDto<?> acceptRelation(Member member, RelationAcceptRequestDto dto);
+    ResponseDto<RelationResponseDto> acceptRelation(Member member, RelationAcceptRequestDto dto);
 }

@@ -1,5 +1,6 @@
 package com.example.diary.domain.relation.service;
 
+import static com.example.diary.domain.relation.entity.RelationType.ACCEPT;
 import static com.example.diary.domain.relation.entity.RelationType.APPLY;
 import static com.example.diary.domain.relation.entity.RelationType.WAITING;
 
@@ -16,6 +17,7 @@ import com.example.diary.domain.relation.repository.RelationMemberDto;
 import com.example.diary.domain.relation.repository.RelationRepository;
 import com.example.diary.global.advice.exception.MemberNotFoundException;
 import com.example.diary.global.advice.exception.RelationAlreadyExistException;
+import com.example.diary.global.advice.exception.RelationAlreadyFormedException;
 import com.example.diary.global.advice.exception.RelationNotFoundException;
 import com.example.diary.global.common.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -53,10 +55,12 @@ public class RelationServiceImpl implements RelationService {
 
     @Override
     @Transactional
-    public ResponseDto<?> acceptRelation(Member member, RelationAcceptRequestDto dto) {
+    public ResponseDto<RelationResponseDto> acceptRelation(Member member, RelationAcceptRequestDto dto) {
         Relation relationByMe = customRelationRepository.findRelationByDoubleId(member.getId(), dto.getFriendId());
         Relation relationByFriend = customRelationRepository.findRelationByDoubleId(dto.getFriendId(), member.getId());
+
         checkRelation(relationByMe, relationByFriend);
+        checkAlreadyFriend(relationByMe, relationByFriend);
 
         relationByMe.acceptRelation();
         relationByFriend.acceptRelation();
@@ -76,6 +80,22 @@ public class RelationServiceImpl implements RelationService {
         if (relationByFriend == null) {
             relationRepository.delete(relationByMe);
             throw new RelationNotFoundException();
+        }
+    }
+
+    private void checkAlreadyFriend(Relation relationByMe, Relation relationByFriend) {
+        if (relationByMe.getRelationType() == ACCEPT && relationByFriend.getRelationType() != ACCEPT) {
+            relationByFriend.acceptRelation();
+            return;
+        }
+        if (relationByFriend.getRelationType() == ACCEPT && relationByMe.getRelationType() != ACCEPT) {
+            relationRepository.delete(relationByMe);
+            relationRepository.delete(relationByFriend);
+            throw new IllegalArgumentException("알 수 없는 에러입니다.");
+        }
+
+        if (relationByMe.getRelationType() == ACCEPT && relationByFriend.getRelationType() == ACCEPT) {
+            throw new RelationAlreadyFormedException();
         }
     }
 
