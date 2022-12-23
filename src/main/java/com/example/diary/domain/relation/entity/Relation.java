@@ -38,13 +38,12 @@ public class Relation extends BaseEntity {
 
     public Relation(Member member, Member friend, RelationType relationType) {
         setMember(member);
-        setFriend(friend);
+        this.friend = friend;
         this.relationType = relationType;
     }
 
-    public Relation acceptRelation() {
+    public void acceptRelation() {
         this.relationType = ACCEPT;
-        return this;
     }
 
     public void setMember(Member member) {
@@ -61,5 +60,15 @@ public class Relation extends BaseEntity {
         }
         this.friend = friend;
         friend.getRelations().add(this);
+    }
+
+    @Override
+    public String toString() {
+        return "Relation{" +
+                "id=" + id +
+                ", member=" + member.getEmail() +
+                ", friend=" + friend.getEmail() +
+                ", relationType=" + relationType +
+                '}';
     }
 }

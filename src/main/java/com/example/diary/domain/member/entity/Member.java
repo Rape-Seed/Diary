@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -59,7 +60,7 @@ public class Member extends BaseEntity {
     private List<Diary> diaries = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Relation> relations = new ArrayList<>();
 
     @Builder.Default
@@ -94,5 +95,19 @@ public class Member extends BaseEntity {
         }
 
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", profileImage='" + profileImage + '\'' +
+                ", email='" + email + '\'' +
+                ", code='" + code + '\'' +
+                ", birthday=" + birthday +
+                ", platform=" + platform +
+                ", role=" + role +
+                '}';
     }
 }

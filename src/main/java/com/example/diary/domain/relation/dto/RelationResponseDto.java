@@ -6,18 +6,18 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RelationApplyResponseDto {
+public class RelationResponseDto {
     private Long memberId;
     private Long friendId;
     private String status;
 
-    public RelationApplyResponseDto(Relation relation) {
+    public RelationResponseDto(Relation relation) {
         this.memberId = relation.getMember().getId();
         this.friendId = relation.getFriend().getId();
         this.status = relation.getRelationType().toString();
     }
 
-    public RelationApplyResponseDto(Long memberId, Long friendId, String status) {
+    public RelationResponseDto(Long memberId, Long friendId, String status) {
         this.memberId = memberId;
         this.friendId = friendId;
         this.status = status;
