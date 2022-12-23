@@ -19,6 +19,8 @@ import com.example.diary.domain.relation.repository.RelationMemberDto;
 import com.example.diary.domain.relation.repository.RelationRepository;
 import com.example.diary.global.advice.exception.MemberNotFoundException;
 import com.example.diary.global.advice.exception.RelationAlreadyExistException;
+import com.example.diary.global.advice.exception.RelationAlreadyFormedException;
+import com.example.diary.global.advice.exception.RelationNotFoundException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.persistence.EntityManager;
@@ -50,7 +52,9 @@ class RelationServiceImplTest {
     @BeforeEach
     public void before() {
         Member member1 = makeMember("홍길동", "gil@gmail.com", "1q2w3e4r", "2000-01-01");
+        Member testMember = makeMember("test", "test" + "@gmail.com", "test", "2002-01-01");
         Member savedMember1 = memberRepository.save(member1);
+        Member testMember1 = memberRepository.save(testMember);
 
         for (int i = 0; i < 50; i++) {
             Member newMember = makeMember("테스트" + i, "qwer" + i + "@gmail.com", "qwer" + i, "2002-01-01");
@@ -58,6 +62,7 @@ class RelationServiceImplTest {
             relationRepository.save(new Relation(savedMember1, savedMember2, RelationType.APPLY));
             relationRepository.save(new Relation(savedMember2, savedMember1, RelationType.WAITING));
         }
+
     }
 
     private Member makeMember(String name, String email, String code, String birthday) {
@@ -139,6 +144,42 @@ class RelationServiceImplTest {
                 new RelationSearchCondition("accept"),
                 pageRequest);
         assertThat(acceptMember.getTotalElements()).isEqualTo(2);
+    }
+
+    @Test
+    void acceptFailByRelationNotFound() {
+        Member member = memberRepository.findByEmail("gil@gmail.com");
+        Member member1 = memberRepository.findByEmail("test@gmail.com");
+
+        assertThatThrownBy(
+                () -> relationService.acceptRelation(member, new RelationAcceptRequestDto(member1.getId())))
+                .isInstanceOf(RelationNotFoundException.class);
+    }
+
+    @Test
+    void acceptFailByRelationNotFoundException() {
+        Member member = memberRepository.findByEmail("gil@gmail.com");
+        Member member1 = memberRepository.findByEmail("qwer2@gmail.com");
+
+        relationService.acceptRelation(member, new RelationAcceptRequestDto(member1.getId()));
+
+        assertThatThrownBy(
+                () -> relationService.acceptRelation(member, new RelationAcceptRequestDto(member1.getId())))
+                .isInstanceOf(RelationAlreadyFormedException.class);
+    }
+
+    @Test
+    void acceptFailByIllegalArgumentException() {
+        Member member = memberRepository.findByEmail("gil@gmail.com");
+        Member member1 = memberRepository.findByEmail("qwer2@gmail.com");
+
+        Relation me = customRelationRepository.findRelationByDoubleId(member.getId(), member1.getId());
+        Relation friend = customRelationRepository.findRelationByDoubleId(member1.getId(), member.getId());
+        friend.acceptRelation();
+
+        assertThatThrownBy(
+                () -> relationService.acceptRelation(member, new RelationAcceptRequestDto(member1.getId())))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
 }
