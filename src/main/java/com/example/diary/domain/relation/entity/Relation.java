@@ -42,9 +42,8 @@ public class Relation extends BaseEntity {
         this.relationType = relationType;
     }
 
-    public Relation acceptRelation() {
+    public void acceptRelation() {
         this.relationType = ACCEPT;
-        return this;
     }
 
     public void setMember(Member member) {
