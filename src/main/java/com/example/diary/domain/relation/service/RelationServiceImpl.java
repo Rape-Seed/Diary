@@ -6,7 +6,7 @@ import static com.example.diary.domain.relation.entity.RelationType.WAITING;
 
 import com.example.diary.domain.member.entity.Member;
 import com.example.diary.domain.member.repository.MemberRepository;
-import com.example.diary.domain.relation.dto.RelationAcceptRequestDto;
+import com.example.diary.domain.relation.dto.RelationDecideRequestDto;
 import com.example.diary.domain.relation.dto.RelationPagingDto;
 import com.example.diary.domain.relation.dto.RelationRequestDto;
 import com.example.diary.domain.relation.dto.RelationResponseDto;
@@ -19,11 +19,9 @@ import com.example.diary.global.advice.exception.MemberNotFoundException;
 import com.example.diary.global.advice.exception.RelationAlreadyExistException;
 import com.example.diary.global.advice.exception.RelationAlreadyFormedException;
 import com.example.diary.global.advice.exception.RelationNotFoundException;
-import com.example.diary.global.common.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,16 +53,19 @@ public class RelationServiceImpl implements RelationService {
 
     @Override
     @Transactional
-    public ResponseDto<RelationResponseDto> acceptRelation(Member member, RelationAcceptRequestDto dto) {
-        Relation relationByMe = customRelationRepository.findRelationByDoubleId(member.getId(), dto.getFriendId());
-        Relation relationByFriend = customRelationRepository.findRelationByDoubleId(dto.getFriendId(), member.getId());
+    public RelationResponseDto acceptRelation(Member member, RelationDecideRequestDto dto) {
+        Member friend = memberRepository.findById(dto.getFriendId())
+                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자 입니다."));
+
+        Relation relationByMe = customRelationRepository.findRelationByDoubleId(member.getId(), friend.getId());
+        Relation relationByFriend = customRelationRepository.findRelationByDoubleId(friend.getId(), member.getId());
 
         checkRelation(relationByMe, relationByFriend);
         checkAlreadyFriend(relationByMe, relationByFriend);
 
         relationByMe.acceptRelation();
         relationByFriend.acceptRelation();
-        return new ResponseDto<>(new RelationResponseDto(relationByMe), HttpStatus.OK);
+        return new RelationResponseDto(relationByMe);
     }
 
     private void checkRelation(Relation relationByMe, Relation relationByFriend) {
@@ -99,6 +100,16 @@ public class RelationServiceImpl implements RelationService {
         }
     }
 
+    @Override
+    public void rejectRelation(Member member, Long friendId) {
+        Member friend = memberRepository.findById(friendId)
+                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 사용자 입니다."));
+
+        member.getRelations()
+                .remove(customRelationRepository.findRelationByDoubleId(member.getId(), friend.getId()));
+        friend.getRelations()
+                .remove(customRelationRepository.findRelationByDoubleId(friend.getId(), member.getId()));
+    }
 
     @Override
     public RelationPagingDto getRelationsByStatus(Member member,
