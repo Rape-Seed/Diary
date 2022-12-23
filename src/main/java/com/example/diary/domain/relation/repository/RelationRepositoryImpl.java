@@ -4,6 +4,8 @@ import static com.example.diary.domain.member.entity.QMember.member;
 import static com.example.diary.domain.relation.entity.QRelation.relation;
 
 import com.example.diary.domain.relation.dto.RelationSearchCondition;
+import com.example.diary.domain.relation.entity.QRelation;
+import com.example.diary.domain.relation.entity.Relation;
 import com.example.diary.domain.relation.entity.RelationType;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -26,6 +28,15 @@ public class RelationRepositoryImpl implements CustomRelationRepository {
 
     private final JPAQueryFactory queryFactory;
 
+    @Override
+    public Relation findRelationByDoubleId(Long memberId, Long friendId) {
+        return queryFactory
+                .selectFrom(QRelation.relation).distinct()
+                .where(
+                        memberIdEq(memberId).and(friendIdEq(friendId))
+                )
+                .fetchOne();
+    }
 
     @Override
     public Page<RelationMemberDto> findRelationFromType(Long memberId,
@@ -75,8 +86,13 @@ public class RelationRepositoryImpl implements CustomRelationRepository {
                 );
     }
 
+
     private BooleanExpression memberIdEq(Long memberId) {
         return memberId != null ? relation.member.id.eq(memberId) : null;
+    }
+
+    private BooleanExpression friendIdEq(Long friendId) {
+        return friendId != null ? relation.friend.id.eq(friendId) : null;
     }
 
     private BooleanExpression relationTypeEq(RelationType relationType) {
