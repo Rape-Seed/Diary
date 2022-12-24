@@ -69,7 +69,8 @@ public class RelationApiController {
      * 친구삭제, 거경
      */
     @DeleteMapping("/v1/relations")
-    public ResponseDto<?> deleteRelation(@CurrentMember Member member, @RequestHeader("Friend-Id") String friendId) {
+    public ResponseDto<?> deleteRelation(@CurrentMember Member member,
+                                         @RequestHeader("Friend-Id") String friendId) {
         relationService.rejectRelation(member, Long.valueOf(friendId));
         return new ResponseDto<>("친구 거절 되었습니다.", HttpStatus.OK);
     }
