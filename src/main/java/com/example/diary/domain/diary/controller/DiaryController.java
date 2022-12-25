@@ -26,12 +26,26 @@ public class DiaryController {
     private final DiaryShareService diaryShareService;
     private final DiaryPersonalService diaryPersonalService;
 
-    @PutMapping("/v1/diary/mt/{diaryId}")
+    @GetMapping("/v1/diary/my/{diaryId}")
+    public ResponseDto<DiaryDto> getPersonalDiary(@PathVariable("diaryId") Long diaryId,
+                                                  @CurrentMember Member member) {
+        DiaryDto diaryDto = diaryPersonalService.get(diaryId, member);
+        return new ResponseDto<>(diaryDto, HttpStatus.OK);
+    }
+
+    @PutMapping("/v1/diary/my/{diaryId}")
     public ResponseDto<DiaryDto> updatePersonalDiary(@PathVariable("diaryId") Long diaryId,
                                                      @RequestBody DiaryUpdateRequest diaryUpdateRequest,
                                                      @CurrentMember Member member) {
         DiaryDto diaryDto = diaryPersonalService.update(diaryId, diaryUpdateRequest, member);
         return new ResponseDto<>(diaryDto, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/v1/diary/my")
+    public ResponseDto<Long> deletePersonalDiary(@RequestHeader("Diary-Id") Long diaryId,
+                                                 @CurrentMember Member member) {
+        Long deletedDiaryId = diaryPersonalService.delete(diaryId, member);
+        return new ResponseDto<>(deletedDiaryId, HttpStatus.OK);
     }
 
     @GetMapping("/v1/diary/share/{diaryId}")
