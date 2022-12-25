@@ -42,4 +42,10 @@ public class MemberServiceImpl implements MemberService {
 
         return new InfoResponseDto(getMember);
     }
+
+    @Override
+    @Transactional
+    public void withdrawMembership(Member member) {
+        memberRepository.delete(member);
+    }
 }
