@@ -8,13 +8,13 @@ import lombok.Setter;
 public class ExceptionResponse {
     private boolean success;
     private int status;
-    private String msg;
+    private String message;
 
-    public static ExceptionResponse getFailureResult(int status, String msg) {
+    public static ExceptionResponse getFailureResult(int status, String message) {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
         exceptionResponse.setSuccess(false);
         exceptionResponse.setStatus(status);
-        exceptionResponse.setMsg(msg);
+        exceptionResponse.setMessage(message);
 
         return exceptionResponse;
     }
