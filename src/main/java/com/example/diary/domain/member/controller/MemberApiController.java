@@ -6,7 +6,6 @@ import com.example.diary.domain.member.entity.CurrentMember;
 import com.example.diary.domain.member.entity.Member;
 import com.example.diary.domain.member.service.MemberService;
 import com.example.diary.global.common.dto.ResponseDto;
-import com.example.diary.global.common.dto.SimpleResponseDto;
 import com.example.diary.global.utils.QRUtils;
 import com.google.zxing.WriterException;
 import java.io.IOException;
@@ -50,10 +49,16 @@ public class MemberApiController {
         return new ResponseEntity<>(memberService.getMemberCode(member), HttpStatus.OK);
     }
 
+//    @DeleteMapping("/v1/member")
+//    public SimpleResponseDto withdrawMembership(@CurrentMember Member member) {
+//        memberService.withdrawMembership(member);
+//        return new SimpleResponseDto("회원 탈퇴가 완료되었습니다.", HttpStatus.OK);
+//    }
+
     @DeleteMapping("/v1/member")
-    public SimpleResponseDto withdrawMembership(@CurrentMember Member member) {
+    public ResponseDto<Boolean> withdrawMembership(@CurrentMember Member member) {
         memberService.withdrawMembership(member);
-        return new SimpleResponseDto("회원 탈퇴가 완료되었습니다.", HttpStatus.OK);
+        return new ResponseDto<>(true, "회원 탈퇴가 완료되었습니다.", HttpStatus.OK);
     }
 
 
