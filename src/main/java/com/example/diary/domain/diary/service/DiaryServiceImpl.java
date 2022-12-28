@@ -1,5 +1,6 @@
 package com.example.diary.domain.diary.service;
 
+import com.example.diary.domain.diary.dto.DiaryCreateResponseDto;
 import com.example.diary.domain.diary.dto.DiaryDto;
 import com.example.diary.domain.diary.dto.DiaryRequest;
 import com.example.diary.domain.diary.dto.DiaryUpdateRequest;
@@ -48,35 +49,36 @@ public class DiaryServiceImpl implements DiaryService {
     }
 
     private void checkAvailableDate(LocalDate date, LocalDate currentDate) {
-        if (date.isBefore(currentDate) || date.plusDays(1).isAfter(currentDate)) {
+        if (!date.isEqual(currentDate) && !date.minusDays(1).isEqual(currentDate)) {
             throw new WrongDateException();
         }
     }
 
-    public DiaryDto create(DiaryRequest diaryRequest, Member member) {
+    public DiaryCreateResponseDto create(DiaryRequest diaryRequest, Member member) {
         checkAvailableDate(diaryRequest.getDate(), diaryRequest.getCurrentTime().toLocalDate());
-        Diary savedDiary = new Diary();
-        if (!diaryRequest.getScope().getTeams().isEmpty()) {
-            savedDiary = createSharedDiary(diaryRequest, member);
+        List<DiaryDto> diaries = new ArrayList<>();
+        if (diaryRequest.getScope().getTeams() != null) {
+            diaries.addAll(createSharedDiary(diaryRequest, member));
         }
         if (diaryRequest.getScope().isPersonal()) {
-            savedDiary = createPersonalDiary(diaryRequest, member);
+            diaries.add(createPersonalDiary(diaryRequest, member));
         }
-        return DiaryDto.ofPersonal(savedDiary);
+        return new DiaryCreateResponseDto(diaries);
     }
 
-    private Diary createPersonalDiary(DiaryRequest diaryRequest, Member member) {
+    private DiaryDto createPersonalDiary(DiaryRequest diaryRequest, Member member) {
         Diary newDiary = Diary.builder()
                 .content(diaryRequest.getContent())
                 .member(member)
                 .date(diaryRequest.getDate())
                 .build();
-        return diaryRepository.save(newDiary);
+        Diary savedDiary = diaryRepository.save(newDiary);
+        return DiaryDto.ofPersonal(savedDiary);
     }
 
-    public Diary createSharedDiary(DiaryRequest diaryRequest, Member member) {
+    public List<DiaryDto> createSharedDiary(DiaryRequest diaryRequest, Member member) {
         List<Team> teams = teamRepository.findTeamsById(diaryRequest.getScope().getTeams());
-        List<Diary> diaries = new ArrayList<>();
+        List<DiaryDto> diaries = new ArrayList<>();
         for (Team team : teams) {
             Diary newDiary = Diary.builder()
                     .content(diaryRequest.getContent())
@@ -85,8 +87,8 @@ public class DiaryServiceImpl implements DiaryService {
                     .date(diaryRequest.getDate())
                     .build();
             Diary savedDiary = diaryRepository.save(newDiary);
-            diaries.add(savedDiary);
+            diaries.add(DiaryDto.ofShared(savedDiary));
         }
-        return diaries.get(0);
+        return diaries;
     }
 }

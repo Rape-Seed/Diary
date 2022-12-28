@@ -27,11 +27,21 @@ public class DiaryRequest {
     private LocalDateTime currentTime;
 
     @Getter
+    @Setter
+    @AllArgsConstructor
     public static class Scope {
 
         private boolean isPersonal;
 
         private List<Long> teams;
+
+        public Scope(boolean isPersonal) {
+            this.isPersonal = isPersonal;
+        }
+
+        public Scope(List<Long> teams) {
+            this.teams = teams;
+        }
     }
 
 }
