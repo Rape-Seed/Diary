@@ -1,7 +1,7 @@
 package com.example.diary.domain.diary.service;
 
 import com.example.diary.domain.diary.dto.DiaryCreateResponseDto;
-import com.example.diary.domain.diary.dto.DiaryDto;
+import com.example.diary.domain.diary.dto.DiaryCreateResponseDto.DiaryCreateDto;
 import com.example.diary.domain.diary.dto.DiaryRequest;
 import com.example.diary.domain.diary.dto.DiaryUpdateRequest;
 import com.example.diary.domain.diary.entity.Diary;
@@ -56,7 +56,7 @@ public class DiaryServiceImpl implements DiaryService {
 
     public DiaryCreateResponseDto create(DiaryRequest diaryRequest, Member member) {
         checkAvailableDate(diaryRequest.getDate(), diaryRequest.getCurrentTime().toLocalDate());
-        List<DiaryDto> diaries = new ArrayList<>();
+        List<DiaryCreateDto> diaries = new ArrayList<>();
         if (diaryRequest.getScope().getTeams() != null) {
             diaries.addAll(createSharedDiary(diaryRequest, member));
         }
@@ -66,19 +66,19 @@ public class DiaryServiceImpl implements DiaryService {
         return new DiaryCreateResponseDto(diaries);
     }
 
-    private DiaryDto createPersonalDiary(DiaryRequest diaryRequest, Member member) {
+    private DiaryCreateDto createPersonalDiary(DiaryRequest diaryRequest, Member member) {
         Diary newDiary = Diary.builder()
                 .content(diaryRequest.getContent())
                 .member(member)
                 .date(diaryRequest.getDate())
                 .build();
         Diary savedDiary = diaryRepository.save(newDiary);
-        return DiaryDto.ofPersonal(savedDiary);
+        return DiaryCreateDto.ofPersonal(savedDiary);
     }
 
-    public List<DiaryDto> createSharedDiary(DiaryRequest diaryRequest, Member member) {
+    public List<DiaryCreateDto> createSharedDiary(DiaryRequest diaryRequest, Member member) {
         List<Team> teams = teamRepository.findTeamsById(diaryRequest.getScope().getTeams());
-        List<DiaryDto> diaries = new ArrayList<>();
+        List<DiaryCreateDto> diaries = new ArrayList<>();
         for (Team team : teams) {
             Diary newDiary = Diary.builder()
                     .content(diaryRequest.getContent())
@@ -87,7 +87,7 @@ public class DiaryServiceImpl implements DiaryService {
                     .date(diaryRequest.getDate())
                     .build();
             Diary savedDiary = diaryRepository.save(newDiary);
-            diaries.add(DiaryDto.ofShared(savedDiary));
+            diaries.add(DiaryCreateDto.ofShared(savedDiary));
         }
         return diaries;
     }
