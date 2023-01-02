@@ -23,21 +23,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AuthTokenProvider tokenProvider;
     private final RedisService redisService;
 
-    private static final String HEADER_STRING = "X-AUTH-TOKEN";
+//    private static final String HEADER_STRING = "X-AUTH-TOKEN";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         final String accessToken = HeaderUtil.getAccessToken(request);
-        if (ObjectUtils.isEmpty(accessToken)) {
+        if (ObjectUtils.isEmpty(accessToken) || accessToken.equals("")) {
             log.info("[INFO] Couldn't find Token, Permit All Access");
         } else {
             if (redisService.findBlackList(accessToken) != null) {
                 log.info("[ERROR] This Token isn't Allow Access");
                 throw new TokenValidFailedException("[ERROR] This AccessToken is BlackList");
             }
-            setAuthentication(accessToken);
             checkExpiredToken(accessToken);
+            setAuthentication(accessToken);
         }
         filterChain.doFilter(request, response);
     }
