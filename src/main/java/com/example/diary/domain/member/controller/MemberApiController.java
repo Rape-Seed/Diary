@@ -49,12 +49,6 @@ public class MemberApiController {
         return new ResponseEntity<>(memberService.getMemberCode(member), HttpStatus.OK);
     }
 
-//    @DeleteMapping("/v1/member")
-//    public SimpleResponseDto withdrawMembership(@CurrentMember Member member) {
-//        memberService.withdrawMembership(member);
-//        return new SimpleResponseDto("회원 탈퇴가 완료되었습니다.", HttpStatus.OK);
-//    }
-
     @DeleteMapping("/v1/member")
     public ResponseDto<Boolean> withdrawMembership(@CurrentMember Member member) {
         memberService.withdrawMembership(member);
