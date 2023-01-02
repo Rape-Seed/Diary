@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -48,9 +49,16 @@ public class MemberApiController {
         return new ResponseEntity<>(memberService.getMemberCode(member), HttpStatus.OK);
     }
 
+    @DeleteMapping("/v1/member")
+    public ResponseDto<Boolean> withdrawMembership(@CurrentMember Member member) {
+        memberService.withdrawMembership(member);
+        return new ResponseDto<>(true, "회원 탈퇴가 완료되었습니다.", HttpStatus.OK);
+    }
+
+
     //TODO qr을 사용자 코드를 넣어서 생성해 주고 사진을 찍으면 친구추가 정보입력칸에 자동으로 입력되게
     @GetMapping("/v1/member/code/Qr")
-    public ResponseEntity createQrCode(@CurrentMember Member member) throws IOException, WriterException {
+    public ResponseEntity<?> createQrCode(@CurrentMember Member member) throws IOException, WriterException {
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_PNG)
                 .body(QRUtils.generateQRCodeImage(member.getCode(), 200, 200));

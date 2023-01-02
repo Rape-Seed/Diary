@@ -44,7 +44,7 @@ public class RelationApiController {
     /**
      * 친구 추가
      */
-    @PostMapping("/v1/friend")
+    @PostMapping("/v1/relations/friend")
     public ResponseDto<?> enterIntoRelation(@CurrentMember Member member,
                                             @RequestBody RelationRequestDto relationRequestDto) {
         return new ResponseDto<>(
@@ -56,7 +56,7 @@ public class RelationApiController {
     /**
      * 친구 삭제
      */
-    @PostMapping("/v1/accept")
+    @PostMapping("/v1/relations/accept")
     public ResponseDto<RelationResponseDto> acceptRelation(@CurrentMember Member member,
                                                            @RequestBody RelationDecideRequestDto relationAcceptRequestDto) {
         return new ResponseDto<>(
@@ -66,10 +66,11 @@ public class RelationApiController {
     }
 
     /**
-     * 친구삭제, 거절
+     * 친구삭제, 거경
      */
-    @DeleteMapping()
-    public ResponseDto<?> deleteRelation(@CurrentMember Member member, @RequestHeader("Friend-Id") String friendId) {
+    @DeleteMapping("/v1/relations")
+    public ResponseDto<?> deleteRelation(@CurrentMember Member member,
+                                         @RequestHeader("Friend-Id") String friendId) {
         relationService.rejectRelation(member, Long.valueOf(friendId));
         return new ResponseDto<>("친구 거절 되었습니다.", HttpStatus.OK);
     }

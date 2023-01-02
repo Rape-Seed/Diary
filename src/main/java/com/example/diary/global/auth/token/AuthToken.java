@@ -35,7 +35,7 @@ public class AuthToken {
         this.token = createAccessToken(id, role, expiry);
     }
 
-    public String createAccessToken(String id, String role, Date expiry) {
+    private String createAccessToken(String id, String role, Date expiry) {
         return Jwts.builder()
                 .setSubject(id)
                 .claim(CLAIM_NAME, role)
@@ -44,7 +44,7 @@ public class AuthToken {
                 .compact();
     }
 
-    public String createRefreshToken(String id, Date expiry) {
+    private String createRefreshToken(String id, Date expiry) {
         return Jwts.builder()
                 .setSubject(id)
                 .signWith(SignatureAlgorithm.HS512, this.key)
@@ -54,7 +54,7 @@ public class AuthToken {
 
     public Claims getTokenClaims() {
         try {
-            getAllClaimsFromToken(token);
+            return getAllClaimsFromToken(token);
         } catch (SecurityException e) {
             log.info("Invalid JWT signature.");
         } catch (MalformedJwtException e) {
@@ -91,12 +91,8 @@ public class AuthToken {
     }
 
     public Boolean isTokenExpired() {
-        final Date expiration = getExpirationDateFromToken(this.token);
+        final Date expiration = getExpirationDateFromToken();
         return expiration.before(new Date(System.currentTimeMillis()));
-    }
-
-    public Date getExpirationDateFromToken(String token) {
-        return getClaimFromToken(token, Claims::getExpiration);
     }
 
     public Date getExpirationDateFromToken() {
