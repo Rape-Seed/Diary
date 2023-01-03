@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository
-public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
+public class DiaryRepositoryImpl implements DiaryRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
