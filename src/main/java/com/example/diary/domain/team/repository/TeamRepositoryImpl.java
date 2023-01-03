@@ -8,6 +8,7 @@ import static com.querydsl.core.group.GroupBy.list;
 import com.example.diary.domain.member.entity.Member;
 import com.example.diary.domain.team.dto.DiaryTeamRequest;
 import com.example.diary.domain.team.dto.DiaryTeamResponse;
+import com.example.diary.domain.team.entity.Team;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository
-public class TeamRepositoryCustomImpl implements TeamRepositoryCustom {
+public class TeamRepositoryImpl implements TeamRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
@@ -56,5 +57,12 @@ public class TeamRepositoryCustomImpl implements TeamRepositoryCustom {
                                         )
                                 )
                 );
+    }
+
+    @Override
+    public List<Team> findTeamsById(List<Long> teamIds) {
+        return queryFactory.selectFrom(team)
+                .where(team.id.in(teamIds))
+                .fetch();
     }
 }

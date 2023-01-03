@@ -4,10 +4,15 @@ import com.example.diary.domain.diary.entity.Diary;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDate;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class DiaryDto {
 
@@ -23,17 +28,6 @@ public class DiaryDto {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate date;
-
-    @Builder
-    public DiaryDto(Long diaryId, String memberName, String content, String emotion, String teamName,
-                    LocalDate date) {
-        this.diaryId = diaryId;
-        this.memberName = memberName;
-        this.content = content;
-        this.emotion = emotion;
-        this.teamName = teamName;
-        this.date = date;
-    }
 
     public static DiaryDto ofPersonal(Diary diary) {
         return DiaryDto.builder()
