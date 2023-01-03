@@ -29,7 +29,7 @@ public class Team extends BaseEntity {
     private String code;
 
     @Builder.Default
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TeamMember> teamMembers = new ArrayList<>();
 
     private LocalDate startDate;
