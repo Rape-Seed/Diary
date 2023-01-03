@@ -51,7 +51,7 @@ public class DiaryServiceImpl implements DiaryService {
     }
 
     private void checkAvailableDate(LocalDate date, LocalDate currentDate) {
-        if (!date.isEqual(currentDate) && !date.minusDays(1).isEqual(currentDate)) {
+        if (!currentDate.isEqual(date) && !currentDate.minusDays(1).isEqual(date)) {
             throw new WrongDateException();
         }
     }
