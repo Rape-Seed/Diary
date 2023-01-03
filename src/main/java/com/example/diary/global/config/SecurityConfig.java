@@ -1,7 +1,6 @@
 package com.example.diary.global.config;
 
 import com.example.diary.domain.member.entity.Role;
-import com.example.diary.domain.member.repository.MemberRepository;
 import com.example.diary.global.auth.exception.CustomAuthenticationEntryPoint;
 import com.example.diary.global.auth.filter.JwtAuthenticationFilter;
 import com.example.diary.global.auth.handler.CustomAccessDeniedHandler;
@@ -42,7 +41,6 @@ public class SecurityConfig {
     private final OAuth2Properties oAuth2Properties;
 
     private final ObjectMapper objectMapper;
-    private final MemberRepository memberRepository;
 
     private final RedisService redisService;
     private final CustomOAuth2UserService oAuth2UserService;
@@ -67,6 +65,7 @@ public class SecurityConfig {
                         .antMatchers("/", "/hello", "/login").permitAll()
                         .antMatchers("/h2-console/**").permitAll()
                         .antMatchers("/api/v1/sign/**").permitAll()
+                        .antMatchers("/api/v1/emotion/**").permitAll()
                         .antMatchers("/api/v1/**").hasRole(Role.MEMBER.name())
                         .anyRequest().authenticated())
                 .oauth2Login()
