@@ -7,7 +7,9 @@ import com.example.diary.domain.diary.dto.DiaryUpdateRequest;
 import com.example.diary.domain.diary.entity.Diary;
 import com.example.diary.domain.diary.repository.DiaryRepository;
 import com.example.diary.domain.member.entity.Member;
+import com.example.diary.domain.team.entity.AcceptStatus;
 import com.example.diary.domain.team.entity.Team;
+import com.example.diary.domain.team.entity.TeamMember;
 import com.example.diary.domain.team.repository.TeamRepository;
 import com.example.diary.global.advice.exception.DiaryNotAuthorizedException;
 import com.example.diary.global.advice.exception.WrongDateException;
@@ -54,6 +56,21 @@ public class DiaryServiceImpl implements DiaryService {
         }
     }
 
+    public void checkAcceptStatus(TeamMember teamMember) {
+        if (!teamMember.getAcceptStatus().equals(AcceptStatus.APPROVE)) {
+            throw new DiaryNotAuthorizedException("[ERROR] 팀요청을 수락해야합니다");
+        }
+    }
+
+    public TeamMember findTeamMember(List<TeamMember> teamMembers, Member member) {
+        for (TeamMember teamMember : teamMembers) {
+            if (member.equals(teamMember.getMember())) {
+                return teamMember;
+            }
+        }
+        throw new DiaryNotAuthorizedException("[ERROR] 해당 팀의 멤버가 아닙니다.");
+    }
+
     public DiaryCreateResponseDto create(DiaryRequest diaryRequest, Member member) {
         checkAvailableDate(diaryRequest.getDate(), diaryRequest.getCurrentTime().toLocalDate());
         List<DiaryCreateDto> diaries = new ArrayList<>();
@@ -80,6 +97,7 @@ public class DiaryServiceImpl implements DiaryService {
         List<Team> teams = teamRepository.findTeamsById(diaryRequest.getScope().getTeams());
         List<DiaryCreateDto> diaries = new ArrayList<>();
         for (Team team : teams) {
+            checkAcceptStatus(findTeamMember(team.getTeamMembers(), member));
             Diary newDiary = Diary.builder()
                     .content(diaryRequest.getContent())
                     .member(member)
