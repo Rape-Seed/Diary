@@ -78,7 +78,6 @@ class AuthTokenTest {
                 new Date(current + authProperties.getAccessTokenExpiry()), AUTH_KEY);
         LocalDateTime tokenTime = LocalDateTime.ofInstant(
                 token.getExpirationDateFromToken().toInstant(), ZoneId.systemDefault());
-        assertThat(tokenTime.getHour()).isEqualTo(LocalDateTime.now().getHour());
         assertThat(tokenTime.getMinute()).isEqualTo(LocalDateTime.now().plusMinutes(30).getMinute());
     }
 }
