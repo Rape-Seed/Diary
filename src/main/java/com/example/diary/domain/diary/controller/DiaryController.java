@@ -1,8 +1,11 @@
 package com.example.diary.domain.diary.controller;
 
+import com.example.diary.domain.diary.dto.DiaryCreateResponseDto;
 import com.example.diary.domain.diary.dto.DiaryDto;
+import com.example.diary.domain.diary.dto.DiaryRequest;
 import com.example.diary.domain.diary.dto.DiaryUpdateRequest;
 import com.example.diary.domain.diary.service.DiaryPersonalService;
+import com.example.diary.domain.diary.service.DiaryService;
 import com.example.diary.domain.diary.service.DiaryShareService;
 import com.example.diary.domain.member.entity.CurrentMember;
 import com.example.diary.domain.member.entity.Member;
@@ -12,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -25,6 +29,15 @@ public class DiaryController {
 
     private final DiaryShareService diaryShareService;
     private final DiaryPersonalService diaryPersonalService;
+
+    private final DiaryService diaryService;
+
+    @PostMapping("/v1/diary")
+    public ResponseDto<DiaryCreateResponseDto> createDiary(@RequestBody DiaryRequest diaryRequest,
+                                                           @CurrentMember Member member) {
+        DiaryCreateResponseDto diaryCreateResponseDto = diaryService.create(diaryRequest, member);
+        return new ResponseDto<>(diaryCreateResponseDto, HttpStatus.OK);
+    }
 
     @GetMapping("/v1/diary/my/{diaryId}")
     public ResponseDto<DiaryDto> getPersonalDiary(@PathVariable("diaryId") Long diaryId,
