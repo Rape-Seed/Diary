@@ -5,9 +5,12 @@ import com.example.diary.domain.emotion.dto.EmotionAnalyzeDto.Sentences;
 import com.example.diary.domain.emotion.dto.EmotionRequestDto;
 import com.example.diary.domain.emotion.dto.EmotionResponseDto;
 import com.example.diary.domain.emotion.entity.DiaryEmotion;
+import com.example.diary.domain.emotion.entity.EmotionType;
 import com.example.diary.domain.emotion.entity.SentenceEmotion;
 import com.example.diary.domain.emotion.repository.DiaryEmotionRepository;
 import com.example.diary.domain.emotion.repository.SentenceEmotionRepository;
+import com.example.diary.domain.recommend.entity.EmotionGenres;
+import com.example.diary.domain.recommend.service.RecommendService;
 import com.example.diary.global.properties.EmotionProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -23,6 +26,7 @@ public class EmotionServiceImpl implements EmotionService {
 
     private final EmotionProperties properties;
     private final RestTemplate restTemplate;
+    private final RecommendService recommendService;
     private final DiaryEmotionRepository diaryEmotionRepository;
     private final SentenceEmotionRepository sentenceEmotionRepository;
 
@@ -41,7 +45,10 @@ public class EmotionServiceImpl implements EmotionService {
             sentenceEmotionRepository.save(sentenceEmotion);
         }
 
-        return new EmotionResponseDto(diaryEmotion.getSentiment());
+        return new EmotionResponseDto(
+                EmotionType.myEmotion(diaryEmotion.getSentiment()),
+                recommendService.recommendMovie(EmotionGenres.valueOf(diaryEmotion.getSentiment().toUpperCase()))
+        );
     }
 
 

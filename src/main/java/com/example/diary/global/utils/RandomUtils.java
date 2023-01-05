@@ -1,6 +1,8 @@
 package com.example.diary.global.utils;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
@@ -46,6 +48,11 @@ public class RandomUtils {
         return new String(buf);
     }
 
+    private Integer nextInteger(int size) {
+        random.setSeed(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        return random.nextInt(size);
+    }
+
     public static String make() {
         return new RandomUtils().nextString();
     }
@@ -60,6 +67,10 @@ public class RandomUtils {
 
     public static String make(int length, Random random, String symbols) {
         return new RandomUtils(length, random, symbols).nextString();
+    }
+
+    public static Integer makeRandomNumber(int size) {
+        return new RandomUtils(size).nextInteger(size);
     }
 
 }
