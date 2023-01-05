@@ -4,8 +4,10 @@ import com.example.diary.global.advice.exception.AlreadyJoinedMemberException;
 import com.example.diary.global.advice.exception.DiaryNotAuthorizedException;
 import com.example.diary.global.advice.exception.DiaryNotFoundException;
 import com.example.diary.global.advice.exception.FriendNotAuthorizedException;
+import com.example.diary.global.advice.exception.GenresNotFoundException;
 import com.example.diary.global.advice.exception.LoginFailureException;
 import com.example.diary.global.advice.exception.MemberNotFoundException;
+import com.example.diary.global.advice.exception.MovieNotFoundException;
 import com.example.diary.global.advice.exception.RelationAlreadyExistException;
 import com.example.diary.global.advice.exception.RelationAlreadyFormedException;
 import com.example.diary.global.advice.exception.RelationNotFoundException;
@@ -56,6 +58,18 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ExceptionResponse diaryNotAuthorizedException() {
         return ExceptionResponse.getFailureResult(-202, "해당 일기의 접근 권한이 없습니다.");
+    }
+
+    @ExceptionHandler(GenresNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ExceptionResponse genresNotFoundException() {
+        return ExceptionResponse.getFailureResult(-401, "장르를 선택할 수 없습니다.");
+    }
+
+    @ExceptionHandler(MovieNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ExceptionResponse movieNotFoundException() {
+        return ExceptionResponse.getFailureResult(-402, "영화를 찾을 수 없습니다..");
     }
 
     @ExceptionHandler(FriendNotAuthorizedException.class)
