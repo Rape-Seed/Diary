@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -76,7 +77,12 @@ public class RecommendServiceImpl implements RecommendService {
 
     @Override
     @Transactional
-    public void uploadPhrase(MultipartFile file) throws IOException {
+    public Boolean uploadPhrase(MultipartFile file) throws IOException {
+
+        if (!checkExcelFileExist(file) || !checkExcelFile(file)) {
+            return false;
+        }
+
         InputStream inputStream = file.getInputStream();
         XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
         XSSFSheet sheet = workbook.getSheetAt(0);
@@ -100,5 +106,19 @@ public class RecommendServiceImpl implements RecommendService {
             phraseRepository.save(new Phrase(excelData));
         }
         inputStream.close();
+
+        return true;
+    }
+
+    private Boolean checkExcelFileExist(MultipartFile file) {
+        return !file.isEmpty();
+    }
+
+    private Boolean checkExcelFile(MultipartFile file) {
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        if (extension != null && !extension.equals("xlxs") && !extension.equals("xls")) {
+            return false;
+        }
+        return true;
     }
 }

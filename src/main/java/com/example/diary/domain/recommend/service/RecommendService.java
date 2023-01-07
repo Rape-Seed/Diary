@@ -12,5 +12,5 @@ public interface RecommendService {
 
     PhraseResponseDto recommendPhrase();
 
-    void uploadPhrase(MultipartFile file) throws IOException;
+    Boolean uploadPhrase(MultipartFile file) throws IOException;
 }
