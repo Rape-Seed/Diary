@@ -17,6 +17,7 @@ public class RandomUtils {
     private final char[] symbols;
     private final char[] buf;
 
+
     private RandomUtils() {
         this(DEFAULT_LENGTH);
     }
@@ -53,6 +54,11 @@ public class RandomUtils {
         return random.nextInt(size);
     }
 
+    private Long nextInteger(int start, int end) {
+        random.setSeed(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        return (long) (random.nextInt(end - 1) + start);
+    }
+
     public static String make() {
         return new RandomUtils().nextString();
     }
@@ -71,6 +77,10 @@ public class RandomUtils {
 
     public static Integer makeRandomNumber(int size) {
         return new RandomUtils(size).nextInteger(size);
+    }
+
+    public static Long makeRandomNumber(int start, int end) {
+        return new RandomUtils().nextInteger(start, end);
     }
 
 }
