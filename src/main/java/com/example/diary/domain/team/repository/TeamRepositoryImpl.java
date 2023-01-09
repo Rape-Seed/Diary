@@ -6,7 +6,6 @@ import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 
 import com.example.diary.domain.member.entity.Member;
-import com.example.diary.domain.team.dto.DiaryTeamRequest;
 import com.example.diary.domain.team.dto.DiaryTeamResponse;
 import com.example.diary.domain.team.entity.Team;
 import com.querydsl.core.types.Projections;
@@ -32,13 +31,13 @@ public class TeamRepositoryImpl implements TeamRepositoryCustom {
     }
 
     public List<DiaryTeamResponse> findTeamsByMemberAndDate(Member selectMember,
-                                                            DiaryTeamRequest diaryTeamRequest) {
+                                                            LocalDate date) {
         return queryFactory
                 .from(team)
                 .innerJoin(teamMember)
                 .on(team.id.eq(teamMember.team.id))
                 .where(teamMemberIdEq(selectMember.getId()),
-                        dateBetween(diaryTeamRequest.getDate()))
+                        dateBetween(date))
                 .transform(
                         groupBy(team.id)
                                 .list(

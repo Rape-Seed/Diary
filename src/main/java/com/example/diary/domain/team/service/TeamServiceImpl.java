@@ -2,6 +2,7 @@ package com.example.diary.domain.team.service;
 
 import com.example.diary.domain.member.entity.Member;
 import com.example.diary.domain.member.repository.MemberRepository;
+import com.example.diary.domain.team.dto.DiaryTeamResponse;
 import com.example.diary.domain.team.dto.TeamInviteRequest;
 import com.example.diary.domain.team.dto.TeamInviteResponse;
 import com.example.diary.domain.team.dto.TeamReplyRequest;
@@ -114,5 +115,9 @@ public class TeamServiceImpl implements TeamService {
                 .memberName(member.getName())
                 .acceptStatus(teamMember.getAcceptStatus())
                 .build();
+    }
+
+    public List<DiaryTeamResponse> getTeams(Member member, LocalDate date) {
+        return teamRepository.findTeamsByMemberAndDate(member, date);
     }
 }
