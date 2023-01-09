@@ -6,6 +6,9 @@ import com.example.diary.domain.recommend.dto.ExcelData;
 import com.example.diary.domain.recommend.dto.MovieInfoDto;
 import com.example.diary.domain.recommend.dto.MovieInfoDto.Results;
 import com.example.diary.domain.recommend.dto.MovieResponseDto;
+import com.example.diary.domain.recommend.dto.PhraseRegRequestDto;
+import com.example.diary.domain.recommend.dto.PhraseRegRequestDto.RegPhrase;
+import com.example.diary.domain.recommend.dto.PhraseRegResponseDto;
 import com.example.diary.domain.recommend.dto.PhraseResponseDto;
 import com.example.diary.domain.recommend.entity.EmotionGenres;
 import com.example.diary.domain.recommend.entity.Phrase;
@@ -19,6 +22,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -30,12 +34,14 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class RecommendServiceImpl implements RecommendService {
 
     public static final int MAX_PAGE_SIZE = 500;
+    public static final String REG_NULL = "잘못된 입력을 하셨습니다.";
     private final RestTemplate restTemplate;
     private final TMDBProperties tmdbProperties;
     private final PhraseRepository phraseRepository;
@@ -77,20 +83,41 @@ public class RecommendServiceImpl implements RecommendService {
 
     @Override
     @Transactional
-    public Boolean uploadPhrase(MultipartFile file) throws IOException {
-
-        if (!checkExcelFileExist(file) || !checkExcelFile(file)) {
-            return false;
+    public PhraseRegResponseDto registerPhrase(PhraseRegRequestDto phraseRegRequestDto) {
+        PhraseRegResponseDto result = new PhraseRegResponseDto();
+        for (RegPhrase phrase : phraseRegRequestDto.getPhrases()) {
+            if (phrase.getContent().isEmpty() || phrase.getContent().isBlank()) {
+                result.addFailure(phrase.getId(), REG_NULL);
+                continue;
+            }
+            if (phraseRepository.findByContent(phrase.getContent()) != null) {
+                result.addFailure(phrase.getContent(), "이미 등록된 명언입니다.");
+                continue;
+            }
+            Phrase savedPhrase = phraseRepository.save(new Phrase(phrase.getContent()));
+            result.addSuccess(savedPhrase.getContent());
         }
+        return result;
+    }
 
+    @Override
+    @Transactional
+    public PhraseRegResponseDto registerPhraseByExcel(MultipartFile file) throws IOException {
+        if (!checkExcelFileExist(file) || !checkExcelFile(file)) {
+            throw new IllegalArgumentException("파일이 잘못되었습니다.");
+        }
         InputStream inputStream = file.getInputStream();
         XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
         XSSFSheet sheet = workbook.getSheetAt(0);
-
         Iterator<Row> rowIterator = sheet.rowIterator();
+
+        PhraseRegResponseDto result = new PhraseRegResponseDto();
 
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
+            if (row.getRowNum() == 0)
+                continue;
+
             ExcelData excelData = new ExcelData();
             Iterator<Cell> cellIterator = row.cellIterator();
 
@@ -103,12 +130,22 @@ public class RecommendServiceImpl implements RecommendService {
                 }
             }
 
-            phraseRepository.save(new Phrase(excelData));
+            Phrase phrase = new Phrase(excelData);
+            if (phrase.getContent().isEmpty() || phrase.getContent().isBlank()) {
+                result.addFailure("", REG_NULL);
+                continue;
+            }
+            if (phraseRepository.findByContent(phrase.getContent()) != null) {
+                result.addFailure(phrase.getContent(), "이미 등록된 명언입니다.");
+                continue;
+            }
+            result.addSuccess(phraseRepository.save(phrase).getContent());
         }
         inputStream.close();
 
-        return true;
+        return result;
     }
+
 
     private Boolean checkExcelFileExist(MultipartFile file) {
         return !file.isEmpty();
@@ -116,9 +153,7 @@ public class RecommendServiceImpl implements RecommendService {
 
     private Boolean checkExcelFile(MultipartFile file) {
         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-        if (extension != null && !extension.equals("xlxs") && !extension.equals("xls")) {
-            return false;
-        }
-        return true;
+        return extension == null || extension.equals("xlsx") || extension.equals("xls");
     }
+
 }
