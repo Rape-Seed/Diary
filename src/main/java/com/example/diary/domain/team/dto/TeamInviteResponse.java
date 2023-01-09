@@ -24,7 +24,8 @@ public class TeamInviteResponse {
 
     public TeamInviteResponse(List<TeamMember> members, Team team) {
         this.friends = members.stream()
-                .map(m -> new MemberDto(m.getMember().getProfileImage(), m.getMember().getName()))
+                .map(m -> new MemberDto(m.getMember().getId(), m.getMember().getProfileImage(),
+                        m.getMember().getName()))
                 .collect(Collectors.toList());
         this.startDate = team.getStartDate();
         this.endDate = team.getEndDate();
@@ -34,11 +35,14 @@ public class TeamInviteResponse {
     @Data
     public static class MemberDto {
 
+        private Long memberId;
+
         private String profileImage;
 
         private String name;
 
-        public MemberDto(String profileImage, String name) {
+        public MemberDto(Long memberId, String profileImage, String name) {
+            this.memberId = memberId;
             this.profileImage = profileImage;
             this.name = name;
         }

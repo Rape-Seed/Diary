@@ -2,6 +2,7 @@ package com.example.diary.domain.team.service;
 
 import com.example.diary.domain.member.entity.Member;
 import com.example.diary.domain.member.repository.MemberRepository;
+import com.example.diary.domain.team.dto.DiaryTeamResponse;
 import com.example.diary.domain.team.dto.TeamInviteRequest;
 import com.example.diary.domain.team.dto.TeamInviteResponse;
 import com.example.diary.domain.team.dto.TeamReplyRequest;
@@ -14,6 +15,7 @@ import com.example.diary.domain.team.repository.TeamRepository;
 import com.example.diary.global.advice.exception.MemberNotFoundException;
 import com.example.diary.global.advice.exception.TeamNotFoundException;
 import com.example.diary.global.advice.exception.WrongDateException;
+import com.example.diary.global.utils.RandomUtils;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,7 @@ public class TeamServiceImpl implements TeamService {
     private final TeamMemberRepository teamMemberRepository;
     private final MemberRepository memberRepository;
 
-    private Member findMemberById(Long memberId) {
+    public Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
     }
 
@@ -44,7 +46,7 @@ public class TeamServiceImpl implements TeamService {
 
     private Team saveTeam(TeamInviteRequest teamInviteRequest) {
         Team team = Team.builder()
-//                .code(UUID.randomUUID().toString())
+                .code(RandomUtils.make(6))
                 .name(teamInviteRequest.getTeamName())
                 .startDate(teamInviteRequest.getStartDate())
                 .endDate(teamInviteRequest.getEndDate())
@@ -85,12 +87,13 @@ public class TeamServiceImpl implements TeamService {
 
     @Transactional
     @Override
-    public TeamInviteResponse inviteTeam(TeamInviteRequest teamInviteRequest) {
-        checkAvailableDate(teamInviteRequest.getStartDate(), teamInviteRequest.getCurrentTime().toLocalDate());
+    public TeamInviteResponse inviteTeam(TeamInviteRequest teamInviteRequest, Member member) {
+//        checkAvailableDate(teamInviteRequest.getStartDate(), teamInviteRequest.getCurrentTime().toLocalDate());
         checkStartDate(teamInviteRequest.getStartDate(), teamInviteRequest.getEndDate());
         Team team = saveTeam(teamInviteRequest);
-        List<Member> members = getMembersById(teamInviteRequest.getFriends());
-        List<TeamMember> teamMembers = getTeamMembers(team, members);
+        saveTeamMember(team, member);
+        List<Member> friends = getMembersById(teamInviteRequest.getFriends());
+        List<TeamMember> teamMembers = getTeamMembers(team, friends);
         return new TeamInviteResponse(teamMembers, team);
     }
 
@@ -112,5 +115,9 @@ public class TeamServiceImpl implements TeamService {
                 .memberName(member.getName())
                 .acceptStatus(teamMember.getAcceptStatus())
                 .build();
+    }
+
+    public List<DiaryTeamResponse> getTeams(Member member, LocalDate date) {
+        return teamRepository.findTeamsByMemberAndDate(member, date);
     }
 }
