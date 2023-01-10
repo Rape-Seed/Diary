@@ -12,6 +12,7 @@ import com.example.diary.domain.emotion.repository.SentenceEmotionRepository;
 import com.example.diary.domain.recommend.entity.EmotionGenres;
 import com.example.diary.domain.recommend.service.RecommendService;
 import com.example.diary.global.properties.EmotionProperties;
+import com.example.diary.global.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -32,7 +33,7 @@ public class EmotionServiceImpl implements EmotionService {
 
     @Override
     @Transactional
-    public EmotionResponseDto analyzeDiary(EmotionRequestDto emotionRequestDto) {
+    public EmotionResponseDto<?> analyzeDiary(EmotionRequestDto emotionRequestDto) {
         EmotionAnalyzeDto result = restTemplate.postForObject(properties.getApiUrl(),
                 new HttpEntity<>(emotionRequestDto, makeHttpHeader()),
                 EmotionAnalyzeDto.class);
@@ -45,10 +46,24 @@ public class EmotionServiceImpl implements EmotionService {
             sentenceEmotionRepository.save(sentenceEmotion);
         }
 
-        return new EmotionResponseDto(
-                EmotionType.myEmotion(diaryEmotion.getSentiment()),
-                recommendService.recommendMovie(EmotionGenres.valueOf(diaryEmotion.getSentiment().toUpperCase()))
-        );
+        return randomRecommend(diaryEmotion);
+    }
+
+    private EmotionResponseDto<?> randomRecommend(DiaryEmotion diaryEmotion) {
+        Long pick = RandomUtils.makeRandomNumber(0, 3);
+        if (pick == 0) {
+
+            return new EmotionResponseDto<>(
+                    EmotionType.myEmotion(diaryEmotion.getSentiment()),
+                    recommendService.recommendMovie(
+                            EmotionGenres.valueOf(diaryEmotion.getSentiment().toUpperCase()))
+            );
+        } else {
+            return new EmotionResponseDto<>(
+                    EmotionType.myEmotion(diaryEmotion.getSentiment()),
+                    recommendService.recommendPhrase()
+            );
+        }
     }
 
 

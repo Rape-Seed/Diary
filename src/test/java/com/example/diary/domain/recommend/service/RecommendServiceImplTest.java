@@ -1,6 +1,7 @@
 package com.example.diary.domain.recommend.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.example.diary.domain.recommend.dto.PhraseRegRequestDto;
 import com.example.diary.domain.recommend.dto.PhraseRegRequestDto.RegPhrase;
@@ -62,12 +63,35 @@ class RecommendServiceImplTest {
     }
 
     @Test
-    void excelTest() throws IOException {
+    void excelTestSuccess() throws IOException {
         FileInputStream file = new FileInputStream(new File("src/test/resources/static/test.xlsx"));
         MockMultipartFile mockMultipartFile =
                 new MockMultipartFile("test", "test.xlsx", "xlsx", file);
-        Boolean aBoolean = recommendService.registerPhraseByExcel(mockMultipartFile);
-        System.out.println(aBoolean);
+        PhraseRegResponseDto result = recommendService.registerPhraseByExcel(mockMultipartFile);
+
+        assertThat(result.getSavedSuccess().size()).isEqualTo(20);
+        assertThat(result.getSavedFailure().size()).isEqualTo(0);
+    }
+
+    @Test
+    void excelTestSuccessFailure() throws IOException {
+        FileInputStream file = new FileInputStream(new File("src/test/resources/static/test2.xlsx"));
+        MockMultipartFile mockMultipartFile =
+                new MockMultipartFile("test2", "test2.xlsx", "xlsx", file);
+        PhraseRegResponseDto result = recommendService.registerPhraseByExcel(mockMultipartFile);
+
+        assertThat(result.getSavedSuccess().size()).isEqualTo(20);
+        assertThat(result.getSavedFailure().size()).isEqualTo(2);
+        assertThat(phraseRepository.findAll().size()).isEqualTo(20);
+    }
+
+    @Test
+    void throwByNotExcelFile() throws IOException {
+        FileInputStream file = new FileInputStream(new File("src/test/resources/static/test3.txt"));
+        MockMultipartFile mockMultipartFile =
+                new MockMultipartFile("test3", "test3.txt", "txt", file);
+        assertThatThrownBy(() -> recommendService.registerPhraseByExcel(mockMultipartFile))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
 }

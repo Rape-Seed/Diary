@@ -19,7 +19,7 @@ public class EmotionApiController {
     private final EmotionService emotionService;
 
     @PostMapping("/v1/emotion")
-    public ResponseDto<EmotionResponseDto> analyzeMyDiaryEmotion(@RequestBody EmotionRequestDto emotionRequestDto) {
+    public ResponseDto<EmotionResponseDto<?>> analyzeMyDiaryEmotion(@RequestBody EmotionRequestDto emotionRequestDto) {
         return new ResponseDto<>(emotionService.analyzeDiary(emotionRequestDto), "감정을 분석했습니다.", HttpStatus.OK);
     }
 }

@@ -1,22 +1,20 @@
 package com.example.diary.domain.emotion.dto;
 
-import com.example.diary.domain.recommend.dto.MovieResponseDto;
-
-public class EmotionResponseDto {
+public class EmotionResponseDto<T> {
 
     private final String type;
-    private final MovieResponseDto movieResponseDto;
+    private final T recommendResponseDto;
 
-    public EmotionResponseDto(String type, MovieResponseDto movieResponseDto) {
+    public EmotionResponseDto(String type, T recommendResponseDto) {
         this.type = type;
-        this.movieResponseDto = movieResponseDto;
+        this.recommendResponseDto = recommendResponseDto;
     }
 
     public String getType() {
         return type;
     }
 
-    public MovieResponseDto getMovieResponseDto() {
-        return movieResponseDto;
+    public T getRecommendResponseDto() {
+        return recommendResponseDto;
     }
 }
