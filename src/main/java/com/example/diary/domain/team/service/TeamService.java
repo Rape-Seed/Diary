@@ -13,7 +13,7 @@ public interface TeamService {
 
     TeamInviteResponse inviteTeam(TeamInviteRequest teamInviteRequest, Member member);
 
-    TeamReplyResponse replyTeam(TeamReplyRequest teamReplyRequest);
+    TeamReplyResponse replyTeam(TeamReplyRequest teamReplyRequest, Member member);
 
     List<DiaryTeamResponse> getTeams(Member member, LocalDate date);
 }

@@ -103,9 +103,8 @@ public class TeamServiceImpl implements TeamService {
 
     @Transactional
     @Override
-    public TeamReplyResponse replyTeam(TeamReplyRequest teamReplyRequest) {
+    public TeamReplyResponse replyTeam(TeamReplyRequest teamReplyRequest, Member member) {
         Team team = findTeamById(teamReplyRequest.getTeamId());
-        Member member = findMemberById(teamReplyRequest.getMemberId());
         TeamMember teamMember = teamMemberRepository.findTeamMemberByTeamAndMember(team, member);
         teamMember.updateAcceptStatus(teamReplyRequest.getAcceptStatus());
         return TeamReplyResponse.builder()
