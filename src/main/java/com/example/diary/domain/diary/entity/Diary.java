@@ -1,6 +1,7 @@
 package com.example.diary.domain.diary.entity;
 
 import com.example.diary.domain.diary.dto.DiaryUpdateRequest;
+import com.example.diary.domain.emotion.entity.DiaryEmotion;
 import com.example.diary.domain.emotion.entity.Emotion;
 import com.example.diary.domain.member.entity.Member;
 import com.example.diary.domain.team.entity.Team;
@@ -12,7 +13,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -36,6 +39,10 @@ public class Diary extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Team team;
+
+    @OneToOne
+    @JoinColumn(name = "diary_emotion_id")
+    private DiaryEmotion diaryEmotion;
 
     private LocalDate date;
 

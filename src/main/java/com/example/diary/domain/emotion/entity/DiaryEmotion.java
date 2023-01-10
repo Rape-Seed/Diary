@@ -1,5 +1,6 @@
 package com.example.diary.domain.emotion.entity;
 
+import com.example.diary.domain.diary.entity.Diary;
 import com.example.diary.global.common.BaseEntity;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -24,9 +26,9 @@ public class DiaryEmotion extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "diary_emotion_id")
     private Long id;
-    //    @OneToOne(mappedBy = "diary")
-//    private Diary diary;
-    private String diary;
+    @OneToOne(mappedBy = "diary")
+    private Diary diary;
+    private String content;
     private String sentiment;
 
     @Embedded
@@ -44,12 +46,22 @@ public class DiaryEmotion extends BaseEntity {
     public DiaryEmotion() {
     }
 
-    public DiaryEmotion(Long id, String diary, String sentiment, Analysis analysis,
+    public DiaryEmotion(Long id, Diary diary, String content, String sentiment, Analysis analysis,
                         List<SentenceEmotion> sentenceEmotions) {
         this.id = id;
         this.diary = diary;
+        this.content = content;
         this.sentiment = sentiment;
         this.analysis = analysis;
         this.sentenceEmotions = sentenceEmotions;
     }
+
+    //    public DiaryEmotion(Long id, String diary, String sentiment, Analysis analysis,
+//                        List<SentenceEmotion> sentenceEmotions) {
+//        this.id = id;
+//        this.diary = diary;
+//        this.sentiment = sentiment;
+//        this.analysis = analysis;
+//        this.sentenceEmotions = sentenceEmotions;
+//    }
 }

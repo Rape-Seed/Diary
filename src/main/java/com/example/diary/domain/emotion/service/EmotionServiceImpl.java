@@ -1,5 +1,6 @@
 package com.example.diary.domain.emotion.service;
 
+import com.example.diary.domain.diary.repository.DiaryRepository;
 import com.example.diary.domain.emotion.dto.EmotionAnalyzeDto;
 import com.example.diary.domain.emotion.dto.EmotionAnalyzeDto.Sentences;
 import com.example.diary.domain.emotion.dto.EmotionRequestDto;
@@ -11,6 +12,7 @@ import com.example.diary.domain.emotion.repository.DiaryEmotionRepository;
 import com.example.diary.domain.emotion.repository.SentenceEmotionRepository;
 import com.example.diary.domain.recommend.entity.EmotionGenres;
 import com.example.diary.domain.recommend.service.RecommendService;
+import com.example.diary.global.advice.exception.DiaryNotFoundException;
 import com.example.diary.global.properties.EmotionProperties;
 import com.example.diary.global.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,8 @@ public class EmotionServiceImpl implements EmotionService {
 
     private final EmotionProperties properties;
     private final RestTemplate restTemplate;
+
+    private final DiaryRepository diaryRepository;
     private final RecommendService recommendService;
     private final DiaryEmotionRepository diaryEmotionRepository;
     private final SentenceEmotionRepository sentenceEmotionRepository;
@@ -38,8 +42,10 @@ public class EmotionServiceImpl implements EmotionService {
                 new HttpEntity<>(emotionRequestDto, makeHttpHeader()),
                 EmotionAnalyzeDto.class);
 
-        DiaryEmotion diaryEmotion = diaryEmotionRepository.save(result.toDiaryEmotion(emotionRequestDto.getContent()));
-
+        DiaryEmotion diaryEmotion = diaryEmotionRepository.save(result.toDiaryEmotion(
+                emotionRequestDto.getContent(),
+                diaryRepository.findById(emotionRequestDto.getDiaryId()).orElseThrow(DiaryNotFoundException::new)));
+        //TODO Diary 와 매핑되는지 테스트
         for (Sentences sentences : result.getSentences()) {
             SentenceEmotion sentenceEmotion = result.toSentenceEmotion(sentences);
             sentenceEmotion.setDiaryEmotion(diaryEmotion);
