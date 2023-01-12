@@ -5,11 +5,13 @@ import com.example.diary.domain.member.dto.MyInfoRequestDto;
 import com.example.diary.domain.member.entity.CurrentMember;
 import com.example.diary.domain.member.entity.Member;
 import com.example.diary.domain.member.service.MemberService;
+import com.example.diary.domain.notification.dto.NotificationPagingDto;
 import com.example.diary.global.common.dto.ResponseDto;
 import com.example.diary.global.utils.QRUtils;
 import com.google.zxing.WriterException;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -64,4 +66,13 @@ public class MemberApiController {
                 .body(QRUtils.generateQRCodeImage(member.getCode(), 200, 200));
     }
 
+    @GetMapping("/v1/members/notifications")
+    public ResponseDto<NotificationPagingDto> notificationList(@CurrentMember Member member,
+                                                               Pageable pageable) {
+        return new ResponseDto<>(memberService.notificationList(member, pageable), HttpStatus.OK);
+    }
+    /*
+    TODO 알람 save 테스트
+    TODO 알람 리스트 반환 테스트
+    */
 }

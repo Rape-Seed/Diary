@@ -4,11 +4,15 @@ import com.example.diary.domain.member.dto.InfoResponseDto;
 import com.example.diary.domain.member.dto.MyInfoRequestDto;
 import com.example.diary.domain.member.entity.Member;
 import com.example.diary.domain.member.repository.MemberRepository;
+import com.example.diary.domain.notification.dto.NotificationDto;
+import com.example.diary.domain.notification.dto.NotificationPagingDto;
+import com.example.diary.domain.notification.repository.NotificationRepository;
 import com.example.diary.domain.relation.entity.Relation;
-import com.example.diary.domain.relation.repository.CustomRelationRepository;
+import com.example.diary.domain.relation.repository.RelationRepository;
 import com.example.diary.global.advice.exception.FriendNotAuthorizedException;
 import com.example.diary.global.advice.exception.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final RelationRepository relationRepository;
+    private final NotificationRepository notificationRepository;
 
-    private final CustomRelationRepository customRelationRepository;
 
     @Override
     public InfoResponseDto getMyInfo(Member member) {
@@ -40,7 +45,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public InfoResponseDto getMemberInfo(Member member, Long member_id) {
         Member friend = memberRepository.findById(member_id).orElseThrow(MemberNotFoundException::new);
-        Relation relation = customRelationRepository.findRelationByDoubleId(member.getId(), member_id);
+        Relation relation = relationRepository.findRelationByDoubleId(member.getId(), member_id);
         if (!relation.getFriend().equals(friend)) {
             throw new FriendNotAuthorizedException();
         }
@@ -52,5 +57,11 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void withdrawMembership(Member member) {
         memberRepository.delete(member);
+    }
+
+    @Override
+    public NotificationPagingDto notificationList(Member member, Pageable pageable) {
+        return new NotificationPagingDto(
+                notificationRepository.findAllByMember(member, pageable).map(NotificationDto::new));
     }
 }
