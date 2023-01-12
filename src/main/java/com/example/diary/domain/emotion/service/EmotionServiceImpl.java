@@ -58,18 +58,18 @@ public class EmotionServiceImpl implements EmotionService {
     private EmotionResponseDto<?> randomRecommend(DiaryEmotion diaryEmotion) {
         Long pick = RandomUtils.makeRandomNumber(0, 3);
         if (pick == 0) {
-
             return new EmotionResponseDto<>(
                     EmotionType.myEmotion(diaryEmotion.getSentiment()),
                     recommendService.recommendMovie(
                             EmotionGenres.valueOf(diaryEmotion.getSentiment().toUpperCase()))
             );
-        } else {
-            return new EmotionResponseDto<>(
-                    EmotionType.myEmotion(diaryEmotion.getSentiment()),
-                    recommendService.recommendPhrase()
-            );
         }
+
+        return new EmotionResponseDto<>(
+                EmotionType.myEmotion(diaryEmotion.getSentiment()),
+                recommendService.recommendPhrase()
+        );
+
     }
 
 
