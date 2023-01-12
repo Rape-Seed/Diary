@@ -54,7 +54,7 @@ public class RelationApiController {
     }
 
     /**
-     * 친구 삭제
+     * 친구 수락 거절
      */
     @PostMapping("/v1/relations/accept")
     public ResponseDto<RelationResponseDto> acceptRelation(@CurrentMember Member member,
