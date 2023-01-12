@@ -12,6 +12,7 @@ import com.example.diary.domain.relation.dto.RelationRequestDto;
 import com.example.diary.domain.relation.dto.RelationResponseDto;
 import com.example.diary.domain.relation.dto.RelationSearchCondition;
 import com.example.diary.domain.relation.entity.Relation;
+import com.example.diary.domain.relation.event.RelationCreatedEvent;
 import com.example.diary.domain.relation.repository.CustomRelationRepository;
 import com.example.diary.domain.relation.repository.RelationMemberDto;
 import com.example.diary.domain.relation.repository.RelationRepository;
@@ -20,6 +21,7 @@ import com.example.diary.global.advice.exception.RelationAlreadyExistException;
 import com.example.diary.global.advice.exception.RelationAlreadyFormedException;
 import com.example.diary.global.advice.exception.RelationNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,7 @@ public class RelationServiceImpl implements RelationService {
     private final MemberRepository memberRepository;
     private final RelationRepository relationRepository;
     private final CustomRelationRepository customRelationRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -47,7 +50,7 @@ public class RelationServiceImpl implements RelationService {
 
         Relation relationApply = relationRepository.save(new Relation(member, friend, APPLY));
         relationRepository.save(new Relation(friend, member, WAITING));
-
+        eventPublisher.publishEvent(new RelationCreatedEvent(friend, member));
         return new RelationResponseDto(relationApply);
     }
 
