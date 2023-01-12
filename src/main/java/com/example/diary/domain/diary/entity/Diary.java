@@ -13,7 +13,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import lombok.Builder;
@@ -35,13 +34,12 @@ public class Diary extends BaseEntity {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Emotion emotion;
+    private Emotion emotion; //TODO emotion 필요없는 객체
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Team team;
 
-    @OneToOne
-    @JoinColumn(name = "diary_emotion_id")
+    @OneToOne(mappedBy = "diary")
     private DiaryEmotion diaryEmotion;
 
     private LocalDate date;
@@ -49,12 +47,15 @@ public class Diary extends BaseEntity {
     public Diary() {
     }
 
-    public Diary(Long id, Member member, String content, Emotion emotion, Team team, LocalDate date) {
+    public Diary(Long id, Member member, String content, Emotion emotion, Team team, DiaryEmotion diaryEmotion,
+                 LocalDate date) {
+
         this.id = id;
         this.member = member;
         this.content = content;
         this.emotion = emotion;
         this.team = team;
+        this.diaryEmotion = diaryEmotion;
         this.date = date;
     }
 

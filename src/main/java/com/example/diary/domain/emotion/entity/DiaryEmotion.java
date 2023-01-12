@@ -13,6 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import lombok.Builder;
@@ -26,7 +27,9 @@ public class DiaryEmotion extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "diary_emotion_id")
     private Long id;
-    @OneToOne(mappedBy = "diary")
+
+    @OneToOne
+    @JoinColumn(name = "diary_id")
     private Diary diary;
     private String content;
     private String sentiment;
