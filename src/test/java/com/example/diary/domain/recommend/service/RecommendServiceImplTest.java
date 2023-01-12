@@ -29,7 +29,7 @@ class RecommendServiceImplTest {
 
     @AfterEach
     public void after() {
-
+        phraseRepository.deleteAll();
     }
 
     @Test
