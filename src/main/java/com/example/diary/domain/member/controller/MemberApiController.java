@@ -28,28 +28,28 @@ public class MemberApiController {
 
     private final MemberService memberService;
 
-    @GetMapping("/v1/member/myInfo")
+    @GetMapping("/v1/members/myinfo")
     public ResponseDto<InfoResponseDto> getMyInfo(@CurrentMember Member member) {
         return new ResponseDto<>(memberService.getMyInfo(member), HttpStatus.OK);
     }
 
-    @GetMapping("/v1/member/info/{member_id}")
+    @GetMapping("/v1/members/info/{member_id}")
     public ResponseDto<InfoResponseDto> getMemberInfo(@CurrentMember Member member, @PathVariable String member_id) {
         return new ResponseDto<>(memberService.getMemberInfo(member, Long.valueOf(member_id)), HttpStatus.OK);
     }
 
-    @PutMapping("/v1/member/myInfo")
+    @PutMapping("/v1/members/myinfo")
     public ResponseDto<InfoResponseDto> updateMyInfo(@CurrentMember Member member,
                                                      @RequestBody MyInfoRequestDto dto) {
         return new ResponseDto<>(memberService.updateMyInfo(member, dto), HttpStatus.OK);
     }
 
-    @GetMapping("/v1/member/code")
+    @GetMapping("/v1/members/code")
     public ResponseEntity<String> createCode(@CurrentMember Member member) {
         return new ResponseEntity<>(memberService.getMemberCode(member), HttpStatus.OK);
     }
 
-    @DeleteMapping("/v1/member")
+    @DeleteMapping("/v1/members")
     public ResponseDto<Boolean> withdrawMembership(@CurrentMember Member member) {
         memberService.withdrawMembership(member);
         return new ResponseDto<>(true, "회원 탈퇴가 완료되었습니다.", HttpStatus.OK);
@@ -57,7 +57,7 @@ public class MemberApiController {
 
 
     //TODO qr을 사용자 코드를 넣어서 생성해 주고 사진을 찍으면 친구추가 정보입력칸에 자동으로 입력되게
-    @GetMapping("/v1/member/code/Qr")
+    @GetMapping("/v1/members/code/qr")
     public ResponseEntity<?> createQrCode(@CurrentMember Member member) throws IOException, WriterException {
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_PNG)
