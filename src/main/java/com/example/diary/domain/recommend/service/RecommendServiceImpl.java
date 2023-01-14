@@ -49,7 +49,6 @@ public class RecommendServiceImpl implements RecommendService {
     @Override
     public MovieResponseDto recommendMovie(EmotionGenres emotionGenres) {
         Integer genreNumber = EmotionGenres.getGenres(emotionGenres);
-//        Genres genre = Genres.findGenre(genreNumber);
 
         MovieInfoDto movieInfoDto = restTemplate.getForObject(makeMovieDiscoverUrl(genreNumber), MovieInfoDto.class);
         if (movieInfoDto == null || movieInfoDto.getResults() == null) {
@@ -115,8 +114,9 @@ public class RecommendServiceImpl implements RecommendService {
 
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
-            if (row.getRowNum() == 0)
+            if (row.getRowNum() == 0) {
                 continue;
+            }
 
             ExcelData excelData = new ExcelData();
             Iterator<Cell> cellIterator = row.cellIterator();

@@ -4,12 +4,15 @@ import lombok.Getter;
 
 @Getter
 public class EmotionRequestDto {
+
+    private Long diaryId;
     private String content;
 
     public EmotionRequestDto() {
     }
 
-    public EmotionRequestDto(String content) {
+    public EmotionRequestDto(Long diaryId, String content) {
+        this.diaryId = diaryId;
         this.content = content;
     }
 }

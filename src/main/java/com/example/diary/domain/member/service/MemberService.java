@@ -16,4 +16,6 @@ public interface MemberService {
     InfoResponseDto getMemberInfo(Member member, Long member_id);
 
     void withdrawMembership(Member member);
+
+
 }

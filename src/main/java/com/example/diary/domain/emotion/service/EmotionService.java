@@ -5,5 +5,5 @@ import com.example.diary.domain.emotion.dto.EmotionResponseDto;
 
 public interface EmotionService {
 
-    EmotionResponseDto analyzeDiary(EmotionRequestDto emotionRequestDto);
+    EmotionResponseDto<?> analyzeDiary(EmotionRequestDto emotionRequestDto);
 }
