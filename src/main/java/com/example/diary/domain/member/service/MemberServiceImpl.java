@@ -4,15 +4,12 @@ import com.example.diary.domain.member.dto.InfoResponseDto;
 import com.example.diary.domain.member.dto.MyInfoRequestDto;
 import com.example.diary.domain.member.entity.Member;
 import com.example.diary.domain.member.repository.MemberRepository;
-import com.example.diary.domain.notification.dto.NotificationDto;
-import com.example.diary.domain.notification.dto.NotificationPagingDto;
 import com.example.diary.domain.notification.repository.NotificationRepository;
 import com.example.diary.domain.relation.entity.Relation;
 import com.example.diary.domain.relation.repository.RelationRepository;
 import com.example.diary.global.advice.exception.FriendNotAuthorizedException;
 import com.example.diary.global.advice.exception.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,9 +56,5 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.delete(member);
     }
 
-    @Override
-    public NotificationPagingDto notificationList(Member member, Pageable pageable) {
-        return new NotificationPagingDto(
-                notificationRepository.findAllByMember(member, pageable).map(NotificationDto::new));
-    }
+
 }
