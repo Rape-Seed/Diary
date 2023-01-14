@@ -45,7 +45,7 @@ public class EmotionServiceImpl implements EmotionService {
         DiaryEmotion diaryEmotion = diaryEmotionRepository.save(result.toDiaryEmotion(
                 emotionRequestDto.getContent(),
                 diaryRepository.findById(emotionRequestDto.getDiaryId()).orElseThrow(DiaryNotFoundException::new)));
-        //TODO Diary 와 매핑되는지 테스트
+
         for (Sentences sentences : result.getSentences()) {
             SentenceEmotion sentenceEmotion = result.toSentenceEmotion(sentences);
             sentenceEmotion.setDiaryEmotion(diaryEmotion);
