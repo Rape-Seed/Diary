@@ -1,5 +1,6 @@
 package com.example.diary.domain.emotion.dto;
 
+import com.example.diary.domain.diary.entity.Diary;
 import com.example.diary.domain.emotion.entity.Analysis;
 import com.example.diary.domain.emotion.entity.DiaryEmotion;
 import com.example.diary.domain.emotion.entity.SentenceEmotion;
@@ -52,9 +53,10 @@ public class EmotionAnalyzeDto {
         }
     }
 
-    public DiaryEmotion toDiaryEmotion(String content) {
+    public DiaryEmotion toDiaryEmotion(String content, Diary diary) {
         return DiaryEmotion.builder()
-                .diary(content)
+                .diary(diary)
+                .content(content)
                 .sentiment(this.document.getSentiment())
                 .analysis(new Analysis(this.document.getConfidence()))
                 .build();
