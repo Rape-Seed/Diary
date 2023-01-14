@@ -8,6 +8,7 @@ import com.example.diary.domain.member.entity.Member;
 import com.example.diary.domain.member.entity.PlatformType;
 import com.example.diary.domain.member.entity.Role;
 import com.example.diary.domain.member.repository.MemberRepository;
+import com.example.diary.global.utils.RandomUtils;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.Test;
@@ -52,7 +53,7 @@ class DiaryEmotionTest {
         return Member.builder()
                 .name(name)
                 .email(email)
-                .code(code)
+                .code(RandomUtils.make())
                 .birthday(LocalDate.parse(birthday, DateTimeFormatter.ISO_DATE))
                 .profileImage("test")
                 .platform(PlatformType.GOOGLE)
